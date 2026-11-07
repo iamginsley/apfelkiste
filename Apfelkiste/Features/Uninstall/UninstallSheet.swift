@@ -84,7 +84,7 @@ struct UninstallSheet: View {
                                 title: leftover.kind.title,
                                 detail: leftover.url.abbreviatedPath,
                                 size: leftover.size,
-                                note: leftover.match == .likely ? String(localized: "Wahrscheinlich, bitte prüfen") : nil)
+                                notes: notes(for: leftover))
                         }
                         .contextMenu {
                             Button("Im Finder zeigen") { NSWorkspace.shared.activateFileViewerSelecting([leftover.url]) }
@@ -92,7 +92,7 @@ struct UninstallSheet: View {
                     }
                 }
             } header: {
-                Text("Reste in deiner Library")
+                Text("Reste")
             }
 
             if let command = model.brewCommand {
@@ -116,14 +116,26 @@ struct UninstallSheet: View {
         .disabled(model.phase == .working)
     }
 
-    private func row(icon: AnyView, title: String, detail: String, size: Int64?, note: String? = nil) -> some View {
+    private func notes(for leftover: Leftover) -> [(String, String)] {
+        var notes: [(String, String)] = []
+        if leftover.match == .likely { notes.append((String(localized: "Wahrscheinlich, bitte prüfen"), "questionmark.circle")) }
+        if leftover.isReceipt {
+            notes.append((String(localized: "Wird vergessen, nicht verschoben"), "doc.badge.ellipsis"))
+        } else if leftover.requiresAdmin {
+            notes.append((String(localized: "Braucht dein Admin-Passwort"), "lock"))
+        }
+        if leftover.launchdLabel != nil { notes.append((String(localized: "Wird vorher gestoppt"), "stop.circle")) }
+        return notes
+    }
+
+    private func row(icon: AnyView, title: String, detail: String, size: Int64?, notes: [(String, String)] = []) -> some View {
         HStack(spacing: 10) {
             icon
             VStack(alignment: .leading, spacing: 2) {
                 Text(title)
                 Text(detail).font(.caption).foregroundStyle(.secondary).lineLimit(1).truncationMode(.middle)
-                if let note {
-                    Label(note, systemImage: "questionmark.circle")
+                ForEach(notes, id: \.0) { note, symbol in
+                    Label(note, systemImage: symbol)
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
@@ -141,7 +153,9 @@ struct UninstallSheet: View {
                     .foregroundStyle(.red)
                     .lineLimit(2)
             } else if model.phase == .ready, !model.isSelf {
-                Text("Frei werden \(model.totalSize.fileSize)")
+                Text(model.needsAdmin
+                     ? "Frei werden \(model.totalSize.fileSize) · fragt nach deinem Passwort"
+                     : "Frei werden \(model.totalSize.fileSize)")
                     .font(.size)
                     .foregroundStyle(.secondary)
             }

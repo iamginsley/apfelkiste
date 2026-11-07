@@ -28,6 +28,25 @@ private final class TempDir {
     }
 }
 
+/// A finder that only sees the temp folder: user library at `dir`, system library at `dir/SystemLib`.
+private func testFinder(_ dir: TempDir, receipts: any ReceiptReading = FakeReceipts()) -> LeftoverFinder {
+    LeftoverFinder(library: dir.url, systemLibrary: dir.url.appending(path: "SystemLib"), receipts: receipts,
+                   isRemovableByUser: { !$0.path(percentEncoded: false).contains("/SystemLib/") })
+}
+
+private struct FakeReceipts: ReceiptReading {
+    var packages: [String: [String]] = [:]
+    var files: [String: [URL]] = [:]
+    func packages(containing url: URL) -> [String] { packages[url.path(percentEncoded: false)] ?? [] }
+    func installedFiles(of package: String) -> [URL] { files[package] ?? [] }
+}
+
+private func writePlist(_ dict: [String: Any], to url: URL) {
+    try? FileManager.default.createDirectory(at: url.deletingLastPathComponent(), withIntermediateDirectories: true)
+    let data = try! PropertyListSerialization.data(fromPropertyList: dict, format: .xml, options: 0)
+    try! data.write(to: url)
+}
+
 struct FreshnessTests {
     let now = Date(timeIntervalSince1970: 1_800_000_000)
     func daysAgo(_ days: Int) -> Date { Calendar.current.date(byAdding: .day, value: -days, to: now)! }
@@ -61,7 +80,7 @@ struct LeftoverFinderTests {
         // Belongs to someone else.
         dir.file("Preferences/de.beispiel.other.plist")
 
-        let found = LeftoverFinder(library: dir.url).find(for: makeApp(), otherBundleIDs: [])
+        let found = testFinder(dir).find(for: makeApp(), otherBundleIDs: [])
         let names = Set(found.map(\.url.lastPathComponent))
         #expect(names == ["de.beispiel.pixel", "de.beispiel.pixel.plist", "de.beispiel.pixel.ABC-123.plist",
                           "de.beispiel.pixel.savedState", "de.beispiel.pixel.updater.plist", "de.beispiel.pixel.helper"])
@@ -76,7 +95,7 @@ struct LeftoverFinderTests {
         dir.folder("Containers/de.beispiel.pixel.pro")
         dir.folder("Containers/de.beispiel.pixelate")
 
-        let found = LeftoverFinder(library: dir.url)
+        let found = testFinder(dir)
             .find(for: makeApp(), otherBundleIDs: ["de.beispiel.pixel", "de.beispiel.pixel.pro"])
         #expect(found.map(\.url.lastPathComponent) == ["de.beispiel.pixel.plist"])
     }
@@ -87,7 +106,7 @@ struct LeftoverFinderTests {
         dir.folder("Group Containers/group.de.beispiel.pixel")
         dir.folder("Group Containers/OTHERTEAM.de.beispiel.shared")
 
-        let found = LeftoverFinder(library: dir.url).find(for: makeApp(), otherBundleIDs: [])
+        let found = testFinder(dir).find(for: makeApp(), otherBundleIDs: [])
         let byName = Dictionary(uniqueKeysWithValues: found.map { ($0.url.lastPathComponent, $0.isPreselected) })
         #expect(byName == ["TEAM123456.de.beispiel.shared": false, "group.de.beispiel.pixel": true])
     }
@@ -97,9 +116,9 @@ struct LeftoverFinderTests {
         dir.folder("Application Support/Pixelmeister")
         dir.folder("Application Support/Mail")
 
-        let pixel = LeftoverFinder(library: dir.url).find(for: makeApp(), otherBundleIDs: [])
+        let pixel = testFinder(dir).find(for: makeApp(), otherBundleIDs: [])
         #expect(pixel.map(\.match) == [.likely])
-        let mail = LeftoverFinder(library: dir.url).find(for: makeApp(name: "Mail", bundleID: "x.mail"), otherBundleIDs: [])
+        let mail = testFinder(dir).find(for: makeApp(name: "Mail", bundleID: "x.mail"), otherBundleIDs: [])
         #expect(mail.isEmpty)
     }
 
@@ -107,6 +126,131 @@ struct LeftoverFinderTests {
         #expect(LeftoverFinder.belongs("com.foo.app.plist", to: "com.foo.app", others: []))
         #expect(LeftoverFinder.belongs("com.foo.app", to: "com.foo.app", others: []))
         #expect(!LeftoverFinder.belongs("com.foo.application", to: "com.foo.app", others: []))
+    }
+}
+
+struct SystemLeftoverTests {
+    @Test func findsSystemFoldersAsAdmin() {
+        let dir = TempDir()
+        dir.folder("SystemLib/Application Support/de.beispiel.pixel")
+        dir.file("SystemLib/Preferences/de.beispiel.pixel.plist")
+        let found = testFinder(dir).find(for: makeApp(), otherBundleIDs: [])
+        #expect(found.count == 2)
+        #expect(found.allSatisfy { $0.requiresAdmin && $0.isPreselected })
+    }
+
+    @Test func daemonWithHelperByAssociatedBundleID() {
+        let dir = TempDir()
+        // Label uses a vendor prefix, not the bundle ID: only AssociatedBundleIdentifiers ties it to the app.
+        let helper = dir.file("SystemLib/PrivilegedHelperTools/de.beispiel.tool")
+        writePlist(["Label": "de.beispiel.tool", "AssociatedBundleIdentifiers": ["de.beispiel.pixel"],
+                    "Program": helper.path(percentEncoded: false)],
+                   to: dir.url.appending(path: "SystemLib/LaunchDaemons/de.beispiel.tool.plist"))
+        writePlist(["Label": "com.other.daemon", "Program": "/usr/local/bin/other"],
+                   to: dir.url.appending(path: "SystemLib/LaunchDaemons/com.other.daemon.plist"))
+
+        let found = testFinder(dir).find(for: makeApp(), otherBundleIDs: [])
+        let daemon = try? #require(found.first { $0.kind == .launchDaemons })
+        #expect(daemon?.launchdLabel == "de.beispiel.tool")
+        #expect(daemon?.requiresAdmin == true)
+        #expect(found.contains { $0.kind == .privilegedHelper && $0.url.lastPathComponent == "de.beispiel.tool" })
+        #expect(found.count == 2)
+    }
+
+    @Test func agentRunningFromInsideTheBundle() {
+        let dir = TempDir()
+        // Folder URLs from the scanner end in a slash; matching must not depend on it.
+        let app = InstalledApp(url: URL(filePath: "/Applications/Pixelmeister.app/", directoryHint: .isDirectory), name: "Pixelmeister",
+                               bundleID: "de.beispiel.pixel", version: nil, source: .direct, caskToken: nil, isProtected: false,
+                               teamID: nil, installDate: nil, lastUsed: nil, size: nil)
+        #expect(app.url.path(percentEncoded: false).hasSuffix("/"))
+        writePlist(["Label": "com.vendor.sync", "ProgramArguments": ["/Applications/Pixelmeister.app/Contents/MacOS/sync", "--daemon"]],
+                   to: dir.url.appending(path: "LaunchAgents/com.vendor.sync.plist"))
+        let found = testFinder(dir).find(for: app, otherBundleIDs: [])
+        #expect(found.map(\.launchdLabel) == ["com.vendor.sync"])
+        #expect(found.first?.requiresAdmin == false)
+    }
+
+    @Test func receiptAndInstalledFiles() {
+        let dir = TempDir()
+        let tool = dir.file("usr-local/bin/pixel")
+        let receipts = FakeReceipts(
+            packages: ["/Applications/Pixelmeister.app": ["de.beispiel.pixel.pkg"]],
+            files: ["de.beispiel.pixel.pkg": [
+                URL(filePath: "/Applications/Pixelmeister.app/Contents/Info.plist"), // inside the app: removed with it
+                URL(filePath: "/usr/lib/libshared.dylib"),                         // system place: never offered
+                tool,
+                dir.url.appending(path: "gone/file"),                                // missing: skipped
+            ]])
+        let found = testFinder(dir, receipts: receipts).find(for: makeApp(), otherBundleIDs: [])
+        let receipt = try? #require(found.first { $0.isReceipt })
+        #expect(receipt?.packageID == "de.beispiel.pixel.pkg")
+        #expect(receipt?.isPreselected == true)
+        let files = found.filter { $0.kind == .installedFile }
+        #expect(files.map(\.url) == [tool])
+        #expect(files.first?.isPreselected == false)
+    }
+}
+
+struct UninstallPlanTests {
+    @Test func splitsByPrivilege() {
+        let app = makeApp()
+        let leftovers = [
+            Leftover(url: URL(filePath: "/Users/me/Library/Caches/x"), kind: .caches, match: .bundleID),
+            Leftover(url: URL(filePath: "/Users/me/Library/LaunchAgents/x.plist"), kind: .launchAgents, match: .bundleID, launchdLabel: "x.agent"),
+            Leftover(url: URL(filePath: "/Library/LaunchDaemons/x.plist"), kind: .launchDaemons, match: .bundleID, requiresAdmin: true, launchdLabel: "x.daemon"),
+            Leftover(url: URL(filePath: "/var/db/receipts/x.pkg.plist"), kind: .receipt, match: .bundleID, requiresAdmin: true, packageID: "x.pkg"),
+        ]
+        let plan = UninstallPlan(app: app, appRequiresAdmin: true, leftovers: leftovers)
+        #expect(plan.userTrash.map(\.lastPathComponent) == ["x", "x.plist"])
+        #expect(plan.adminTrash.map(\.path) == ["/Applications/Pixelmeister.app", "/Library/LaunchDaemons/x.plist"])
+        #expect(plan.agentLabels == ["x.agent"])
+        #expect(plan.daemonLabels == ["x.daemon"])
+        #expect(plan.packageIDs == ["x.pkg"])
+
+        let trash = URL(filePath: "/Users/me/.Trash")
+        let script = plan.adminScript(destinations: UninstallPlan.trashDestinations(for: plan.adminTrash, in: trash, exists: { _ in false }))
+        #expect(script == """
+        set -e
+        /bin/launchctl bootout system/'x.daemon' 2>/dev/null || true
+        /bin/mv '/Applications/Pixelmeister.app' '/Users/me/.Trash/Pixelmeister.app'
+        /bin/mv '/Library/LaunchDaemons/x.plist' '/Users/me/.Trash/x.plist'
+        /usr/sbin/pkgutil --forget 'x.pkg' >/dev/null 2>&1 || true
+        """)
+    }
+
+    @Test func userOnlyPlanNeedsNoScript() {
+        let plan = UninstallPlan(app: makeApp(), appRequiresAdmin: false, leftovers: [])
+        #expect(!plan.needsAdmin)
+        #expect(plan.adminScript(destinations: [:]) == nil)
+    }
+
+    @Test func quotesSingleQuotes() {
+        #expect(UninstallPlan.quote("Bob's App") == #"'Bob'\''s App'"#)
+    }
+
+    @Test func trashNamesAvoidCollisions() {
+        let trash = URL(filePath: "/T")
+        let urls = [URL(filePath: "/a/Tool.app"), URL(filePath: "/b/Tool.app"), URL(filePath: "/c/notes")]
+        let taken: Set<String> = ["/T/Tool.app", "/T/notes"]
+        let result = UninstallPlan.trashDestinations(for: urls, in: trash, exists: { taken.contains($0.path) })
+        let names = urls.map { result[$0]!.lastPathComponent }
+        #expect(Set(names).count == 3)
+        #expect(names.allSatisfy { !taken.contains("/T/" + $0) })
+        #expect(names[0].hasPrefix("Tool ") && names[0].hasSuffix(".app"))
+    }
+}
+
+struct PackageReceiptsTests {
+    @Test func relativeToInstallRoot() {
+        #expect(PackageReceipts.relativePath(of: "/Applications/X.app", in: URL(filePath: "/Applications")) == "X.app")
+        #expect(PackageReceipts.relativePath(of: "/Applications/X.app", in: URL(filePath: "/")) == "Applications/X.app")
+        #expect(PackageReceipts.relativePath(of: "/Applications/X.app", in: URL(filePath: "/Library")) == nil)
+    }
+
+    @Test func parsesInstallRoot() {
+        let info = "package-id: com.x.pkg\nversion: 1\nvolume: /\nlocation: Library/X\ninstall-time: 1\n"
+        #expect(PackageReceipts.installRoot(fromPkgInfo: info).path == "/Library/X")
     }
 }
 

@@ -17,18 +17,38 @@ last used it. Uninstall an app together with everything it leaves behind in `~/L
 
 ## How leftovers are matched
 
-`LeftoverFinder` only looks at `~/Library` and never deletes anything.
+`LeftoverFinder` only looks, it never deletes. It searches `~/Library`, `/Library`, launchd and installer receipts.
 
-- **Bundle ID matches** (preselected): `<folder>/<bundleID>` and entries that start with `<bundleID>.`
-  (helpers, `ByHost` preferences, launch agents). An entry is never claimed if a longer installed bundle ID
-  matches it (`com.foo.app` never takes `com.foo.app.pro`).
-- **Likely matches** (offered, not preselected): group containers with the app's team ID prefix (shared
-  by all apps of that vendor), and folders named after the app in Application Support, Caches and Logs
-  (only for names of at least five characters).
+- **Sure matches** (preselected): `<folder>/<bundleID>` in both libraries and entries that start with
+  `<bundleID>.` (helpers, `ByHost` preferences, privileged helpers). An entry is never claimed if a longer
+  installed bundle ID matches it (`com.foo.app` never takes `com.foo.app.pro`).
+- **Background services** (preselected): launch agents and daemons in `~/Library` and `/Library` that are
+  named after the app, list it in `AssociatedBundleIdentifiers`, or run a program from inside its bundle.
+  The privileged helper a daemon runs comes along. Services are stopped (`launchctl bootout`) before removal.
+- **Installer receipts** (preselected): the `.pkg` that installed the app is found by checking third-party
+  receipts for the bundle (`pkgutil --file-info` returns nothing for bundles on current macOS). Its receipt is
+  forgotten (`pkgutil --forget`). Files it installed elsewhere are offered (at most 40, never system places).
+- **Likely matches** (offered, not preselected): group containers with the app's team ID prefix (shared by all
+  apps of that vendor), and folders named after the app in Application Support, Caches and Logs.
 - Apps protected by SIP (Safari, apps that resolve into `/System`) are listed but can't be uninstalled.
 
-Not yet covered: system-wide leftovers in `/Library` (need admin rights), login items and background
-services, cleaning caches without uninstalling.
+## How removal works
+
+`UninstallPlan` decides everything before anything is touched:
+
+1. The app is asked to quit.
+2. Items outside the home folder or owned by root (App Store apps, `/Library`, daemons, receipts) go into one
+   shell script run with `do shell script … with administrator privileges`: one password prompt. It stops
+   daemons, moves the items into the user's Trash (`mv`, with Finder-style names on collisions) and forgets
+   receipts. Cancelling the prompt leaves everything untouched, because this step runs first.
+3. Launch agents in the user's session are stopped.
+4. Everything in the home folder goes to the Trash through Finder (`NSWorkspace.recycle`).
+
+Nothing is deleted permanently. Items root moved into the Trash stay root-owned, as with Finder, so emptying
+the Trash asks for the password again.
+
+Not yet covered: leftovers of apps that are already gone, login items registered with `SMAppService`
+(macOS cleans those up when the app disappears), system extensions.
 
 ## Distribution
 

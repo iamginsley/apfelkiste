@@ -13,10 +13,15 @@ struct RealScanSmoke {
         print("SCAN: \(apps.count) apps, \(bySource), protected: \(apps.filter(\.isProtected).map(\.name))")
         print("SCAN: never used: \(apps.filter { $0.lastUsed == nil }.count)")
         let ids = Set(apps.compactMap(\.bundleID))
-        for app in apps.filter({ !$0.isAppleApp }).prefix(6) {
+        let interesting = ProcessInfo.processInfo.environment["REAL_SCAN_APPS"]?.split(separator: ",").map(String.init)
+        let picked = interesting.map { names in apps.filter { names.contains($0.name) } } ?? Array(apps.filter { !$0.isAppleApp }.prefix(6))
+        for app in picked {
             let leftovers = await repository.leftovers(for: app, otherBundleIDs: ids)
             let size = await repository.size(of: app.url)
-            print("SCAN: \(app.name) \(app.version ?? "-") \(size.fileSize) team=\(app.teamID ?? "-") leftovers=\(leftovers.map { "\($0.kind.title):\($0.url.lastPathComponent)" })")
+            print("SCAN: \(app.name) \(app.version ?? "-") \(size.fileSize) team=\(app.teamID ?? "-") ")
+            for leftover in leftovers {
+                print("SCAN:   \(leftover.isPreselected ? "[x]" : "[ ]") \(leftover.requiresAdmin ? "🔒" : "  ") \(leftover.kind.title): \(leftover.url.path(percentEncoded: false))\(leftover.launchdLabel.map { " label=\($0)" } ?? "")")
+            }
         }
     }
 }
