@@ -5,12 +5,18 @@ import SwiftUI
 /// background, no cards. Glass belongs to the toolbar and sidebar, not here.
 struct AppInspector: View {
     @Environment(AppsViewModel.self) private var model
+    /// Leftovers of the shown app, loaded in the background: what uninstalling would really free.
+    @State private var leftovers: (appID: String, count: Int, size: Int64)?
 
     var body: some View {
         if let app = model.inspectedApp {
             ScrollView {
                 details(app)
                     .padding(20)
+            }
+            .task(id: app.id) {
+                let found = await model.repository.leftovers(for: app, otherBundleIDs: model.otherBundleIDs)
+                leftovers = (app.id, found.count, found.reduce(0) { $0 + ($1.size ?? 0) })
             }
         } else {
             ContentUnavailableView {
@@ -47,7 +53,7 @@ struct AppInspector: View {
             Grid(alignment: .leadingFirstTextBaseline, horizontalSpacing: 12, verticalSpacing: 8) {
                 row("Version", app.version ?? "–")
                 row("Herkunft", app.source.title)
-                row("Zuletzt benutzt", lastUsedText(app.lastUsed))
+                row("Zuletzt aktiv", lastUsedText(app))
                 if let date = app.installDate {
                     row("Hinzugefügt", date.formatted(date: .abbreviated, time: .omitted))
                 }
@@ -57,6 +63,22 @@ struct AppInspector: View {
                 row("Ort", (app.url.deletingLastPathComponent().path(percentEncoded: false) as NSString).abbreviatingWithTildeInPath)
             }
             .font(.callout)
+
+            Divider()
+
+            VStack(alignment: .leading, spacing: 6) {
+                Text("Was wirklich drinsteckt")
+                    .font(.headline)
+                Grid(alignment: .leadingFirstTextBaseline, horizontalSpacing: 12, verticalSpacing: 6) {
+                    let current = leftovers?.appID == app.id ? leftovers : nil
+                    sizeRow("App", app.size)
+                    sizeRow(current.map { $0.count == 1 ? "1 Rest" : "\($0.count) Reste" } ?? String(localized: "Reste"),
+                            current?.size, searching: current == nil)
+                    Divider().gridCellUnsizedAxes(.horizontal)
+                    sizeRow("Frei nach dem Deinstallieren", current.map { (app.size ?? 0) + $0.size }, emphasized: true)
+                }
+                .font(.callout)
+            }
 
             Divider()
 
@@ -76,6 +98,19 @@ struct AppInspector: View {
                 .controlSize(.large)
                 .buttonStyle(.bordered)
             }
+        }
+    }
+
+    private func sizeRow(_ label: String, _ size: Int64?, searching: Bool = false, emphasized: Bool = false) -> some View {
+        GridRow {
+            Text(label)
+                .foregroundStyle(emphasized ? .primary : .secondary)
+            Text(size.map(\.fileSize) ?? (searching ? String(localized: "wird gesucht …") : "…"))
+                .monospacedDigit()
+                .fontWeight(emphasized ? .semibold : .regular)
+                .foregroundStyle(size == nil ? .tertiary : .primary)
+                .gridColumnAlignment(.trailing)
+                .frame(maxWidth: .infinity, alignment: .trailing)
         }
     }
 

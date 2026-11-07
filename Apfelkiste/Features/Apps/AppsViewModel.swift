@@ -1,4 +1,4 @@
-import Foundation
+import AppKit
 import Observation
 
 /// Sidebar entries, like the categories in Windows' "Programs and Features".
@@ -55,9 +55,17 @@ final class AppsViewModel {
             app.size = known[app.id] ?? nil
             return app
         }
+        markRunning()
         selection = selection.filter { id in apps.contains { $0.id == id } }
         isLoading = false
         await measureSizes()
+    }
+
+    /// Running apps count as fresh, whatever Spotlight and the file dates say.
+    func markRunning(bundleIDs: Set<String> = Set(NSWorkspace.shared.runningApplications.compactMap(\.bundleIdentifier))) {
+        for index in apps.indices {
+            apps[index].isRunning = apps[index].bundleID.map(bundleIDs.contains) ?? false
+        }
     }
 
     /// Measures bundle sizes a few at a time and fills them in as they arrive.
@@ -134,6 +142,6 @@ extension InstalledApp {
     var sortName: String { name.lowercased() }
     var sortVersion: String { version ?? "" }
     var sortSize: Int64 { size ?? -1 }
-    var sortLastUsed: Date { lastUsed ?? .distantPast }
+    var sortLastUsed: Date { isRunning ? .distantFuture : lastUsed ?? .distantPast }
     var sortSource: String { source.title }
 }

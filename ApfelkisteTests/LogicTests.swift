@@ -254,6 +254,31 @@ struct PackageReceiptsTests {
     }
 }
 
+struct UsageEvidenceTests {
+    @Test func newestTraceWins() throws {
+        let dir = TempDir()
+        let prefs = dir.file("Preferences/de.beispiel.pixel.plist")
+        dir.folder("Caches/de.beispiel.pixel")
+        let old = Date(timeIntervalSince1970: 1_700_000_000), recent = Date(timeIntervalSince1970: 1_790_000_000)
+        try FileManager.default.setAttributes([.modificationDate: old], ofItemAtPath: prefs.path(percentEncoded: false))
+        try FileManager.default.setAttributes([.modificationDate: recent],
+                                              ofItemAtPath: dir.url.appending(path: "Caches/de.beispiel.pixel").path(percentEncoded: false))
+        let date = UsageEvidence.lastActivity(appURL: URL(filePath: "/nope.app"), bundleID: "de.beispiel.pixel", library: dir.url)
+        #expect(date == recent)
+    }
+
+    @Test func noTracesMeansNoDate() {
+        let dir = TempDir()
+        #expect(UsageEvidence.lastActivity(appURL: URL(filePath: "/nope.app"), bundleID: "de.x", library: dir.url) == nil)
+    }
+
+    @Test func ignoresFutureDates() {
+        let now = Date(timeIntervalSince1970: 1_800_000_000)
+        let past = now.addingTimeInterval(-3600)
+        #expect(UsageEvidence.latest([past, now.addingTimeInterval(86_400)], notAfter: now) == past)
+    }
+}
+
 struct HomebrewCasksTests {
     @Test func readsAppNamesFromJSONAndRuby() {
         let json = #"{"token":"visual-studio-code","artifacts":[{"app":["Visual Studio Code.app"]},{"zap":[]}]}"#
@@ -324,6 +349,17 @@ struct AppsViewModelTests {
         let model = await makeModel()
         model.sortOrder = [KeyPathComparator(\InstalledApp.sortSize, order: .reverse)]
         #expect(model.visibleApps.first?.name == "Tonstudio")
+    }
+
+    @Test func runningAppsAreFresh() async {
+        let model = await makeModel()
+        let never = try? #require(model.apps.first { $0.name == "Vokabeltrainer" })
+        #expect(model.freshness(of: never!) == .windfall)
+        model.markRunning(bundleIDs: [never!.bundleID!])
+        let running = model.apps.first { $0.name == "Vokabeltrainer" }!
+        #expect(running.isRunning)
+        #expect(model.freshness(of: running) == .fresh)
+        #expect(lastUsedText(running) == "Läuft gerade")
     }
 
     @Test func uninstallRemovesFromList() async {

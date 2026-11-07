@@ -17,7 +17,10 @@ struct InstalledApp: Identifiable, Hashable, Sendable {
     /// Developer team from the code signature, used to find shared group containers.
     let teamID: String?
     let installDate: Date?
-    let lastUsed: Date?
+    /// Last sign of use: Spotlight or the app's own files in ~/Library. See `UsageEvidence`.
+    var lastUsed: Date?
+    /// Running right now: counts as fresh whatever the dates say.
+    var isRunning = false
     /// Allocated size of the bundle in bytes. `nil` until measured.
     var size: Int64?
 
@@ -25,7 +28,7 @@ struct InstalledApp: Identifiable, Hashable, Sendable {
     var isAppleApp: Bool { bundleID?.hasPrefix("com.apple.") == true }
 
     func freshness(now: Date = .now, windfallDays: Int = Freshness.defaultWindfallDays) -> Freshness {
-        Freshness(lastUsed: lastUsed, now: now, windfallDays: windfallDays)
+        isRunning ? .fresh : Freshness(lastUsed: lastUsed, now: now, windfallDays: windfallDays)
     }
 }
 

@@ -69,15 +69,9 @@ struct AppScanner: Sendable {
             isProtected: isProtected,
             teamID: teamIdentifier(of: url),
             installDate: values?.addedToDirectoryDate ?? values?.creationDate,
-            lastUsed: lastUsedDate(of: url),
+            lastUsed: UsageEvidence.lastActivity(appURL: url, bundleID: bundleID),
             size: nil
         )
-    }
-
-    /// "Last opened" from Spotlight, the same date Finder shows.
-    static func lastUsedDate(of url: URL) -> Date? {
-        guard let item = MDItemCreateWithURL(nil, url as CFURL) else { return nil }
-        return MDItemCopyAttribute(item, kMDItemLastUsedDate) as? Date
     }
 
     static func teamIdentifier(of url: URL) -> String? {

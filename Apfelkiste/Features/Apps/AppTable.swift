@@ -7,6 +7,7 @@ struct AppTable: View {
 
     var body: some View {
         @Bindable var model = model
+        let maxSize = max(model.visibleApps.compactMap(\.size).max() ?? 1, 1)
         Table(model.visibleApps, selection: $model.selection, sortOrder: $model.sortOrder) {
             TableColumn("Name", value: \.sortName) { app in
                 HStack(spacing: 8) {
@@ -30,17 +31,19 @@ struct AppTable: View {
             .width(min: 60, ideal: 90)
 
             TableColumn("Größe", value: \.sortSize) { app in
-                Group {
+                HStack(spacing: 8) {
                     if let size = app.size {
+                        SizeBar(fraction: Double(size) / Double(maxSize))
+                        Spacer(minLength: 0)
                         Text(size.fileSize)
                     } else {
+                        Spacer(minLength: 0)
                         Text("…").foregroundStyle(.tertiary).accessibilityLabel("Wird ermittelt")
                     }
                 }
                 .font(.size)
-                .frame(maxWidth: .infinity, alignment: .trailing)
             }
-            .width(min: 70, ideal: 90)
+            .width(min: 110, ideal: 130)
 
             TableColumn("Herkunft", value: \.sortSource) { app in
                 Text(app.source.title)
@@ -48,10 +51,10 @@ struct AppTable: View {
             }
             .width(min: 90, ideal: 120)
 
-            TableColumn("Zuletzt benutzt", value: \.sortLastUsed) { app in
+            TableColumn("Zuletzt aktiv", value: \.sortLastUsed) { app in
                 HStack(spacing: 6) {
                     FreshnessApple(freshness: model.freshness(of: app))
-                    Text(lastUsedText(app.lastUsed))
+                    Text(lastUsedText(app))
                 }
                 .accessibilityElement(children: .combine)
             }
