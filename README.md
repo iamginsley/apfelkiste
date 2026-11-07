@@ -3,8 +3,16 @@
 "Programs and Features" for the Mac: every app in one sortable list, with size, version, source and when you
 last used it. Uninstall an app together with everything it leaves behind in `~/Library`.
 
-- **List:** icon, name, version, size on disk, source (App Store, Homebrew, downloaded directly, Apple) and
-  last use. Sort by any column, search by name or bundle ID, status bar with count and total size.
+- **List:** icon, name, version, size on disk with a bar relative to the biggest app, source (App Store,
+  Homebrew, downloaded directly, Apple) and last activity. Sort by any column, search by name or bundle ID.
+- **Crate header:** "110 Äpfel in der Kiste", space used, and the harvest bar: fresh, ripening and windfall
+  apps as one segmented bar, plus a button that collects the windfall.
+- **Last activity:** Spotlight's "last opened" is missing for many apps (login items, Setapp, helpers), so it
+  is combined with Spotlight's usage days, the modification dates of the app's own files in `~/Library`
+  (preferences, caches, web data, saved state, container) and whether it is running right now.
+- **Own note:** accent color Apfelgrün (#2E7D32 light, #33853A dark) instead of system blue, tinted source
+  icons in the sidebar, playful copy. Navigation and controls stay native.
+- **Inspector:** "Was wirklich drinsteckt": app size plus leftovers, i.e. what uninstalling really frees.
 - **Fallobst (windfall):** the signature element. Every app gets a little apple: red when used in the last
   30 days, orange while it ripens, brown and fallen over once it hasn't been opened for 90 days (adjustable
   in the settings). The "Fallobst" sidebar entry collects these candidates for cleaning up.

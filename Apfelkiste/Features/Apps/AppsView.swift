@@ -10,8 +10,11 @@ struct AppsView: View {
             AppSidebar()
                 .navigationSplitViewColumnWidth(min: 190, ideal: 210)
         } detail: {
-            AppTable()
-                .overlay { emptyState }
+            VStack(spacing: 0) {
+                CrateHeader()
+                AppTable()
+                    .overlay { emptyState }
+            }
                 .inspector(isPresented: $model.showsInspector) {
                     AppInspector()
                         .inspectorColumnWidth(min: 260, ideal: 300, max: 380)

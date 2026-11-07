@@ -12,6 +12,7 @@
 		2A83CCEFAD74A09CF7025955 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB15D28ABB31577BE56668C6 /* SettingsView.swift */; };
 		2C9A060CC69297E9141184B3 /* HomebrewCasks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D88DAC760F9BDB3DA0BAF78 /* HomebrewCasks.swift */; };
 		2D2F2514E85D37BD7C17A278 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 28749B936D255CFB441CA2D6 /* Assets.xcassets */; };
+		35F913E4558BC6995FB234DA /* UsageEvidence.swift in Sources */ = {isa = PBXBuildFile; fileRef = E49D210AA828AEA736C39025 /* UsageEvidence.swift */; };
 		3E4B1F0F25388A3D9A5085F5 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEF2A2DA155FC05A07D0D9E9 /* Theme.swift */; };
 		4C86AD30897E5E530D471D9E /* PackageReceipts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99456275B3A29507D3837BEC /* PackageReceipts.swift */; };
 		5186927EA775076F4BC503B5 /* AppInspector.swift in Sources */ = {isa = PBXBuildFile; fileRef = C73DD18CCFC2A61226B18997 /* AppInspector.swift */; };
@@ -24,6 +25,7 @@
 		78191CD6D5E1BA522FFC6658 /* AppsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 520BFE24B4AE1CCBAC266B4D /* AppsView.swift */; };
 		84B51C210FA9152CDAB0A1DE /* AppSidebar.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5ACC4C6EF40A85FE1AE3A56 /* AppSidebar.swift */; };
 		87A5AE3B5D7997D8FD69655E /* Leftover.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3245ACA4E75FEE6AD719A47 /* Leftover.swift */; };
+		B60C6E08F2B5F656EF770BBD /* CrateHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFB271023B004AC5BB2B3E74 /* CrateHeader.swift */; };
 		B74E3B40F4A163BC8FB5DB98 /* DirectorySize.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A90E1F27A6DCE8686839E63 /* DirectorySize.swift */; };
 		C36F1A74F59612C10292FC38 /* LeftoverFinder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 417056B0E6538D9156A037F2 /* LeftoverFinder.swift */; };
 		C7A3073C5F040ED7AE4D2EC7 /* RealScanSmoke.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C572A09E9FD965D55FD8EC7 /* RealScanSmoke.swift */; };
@@ -78,6 +80,8 @@
 		C73DD18CCFC2A61226B18997 /* AppInspector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppInspector.swift; sourceTree = "<group>"; };
 		D58626E063EE436EB3446DA5 /* UninstallSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UninstallSheet.swift; sourceTree = "<group>"; };
 		DF4062E98B9AD2F10DB23E15 /* Apfelkiste.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Apfelkiste.entitlements; sourceTree = "<group>"; };
+		DFB271023B004AC5BB2B3E74 /* CrateHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrateHeader.swift; sourceTree = "<group>"; };
+		E49D210AA828AEA736C39025 /* UsageEvidence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsageEvidence.swift; sourceTree = "<group>"; };
 		E5ACC4C6EF40A85FE1AE3A56 /* AppSidebar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSidebar.swift; sourceTree = "<group>"; };
 		EEF2A2DA155FC05A07D0D9E9 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 		FB15D28ABB31577BE56668C6 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
@@ -160,6 +164,7 @@
 				417056B0E6538D9156A037F2 /* LeftoverFinder.swift */,
 				99456275B3A29507D3837BEC /* PackageReceipts.swift */,
 				2E9AF59D1FCA3FE31CB825CA /* Uninstaller.swift */,
+				E49D210AA828AEA736C39025 /* UsageEvidence.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -203,6 +208,7 @@
 				520BFE24B4AE1CCBAC266B4D /* AppsView.swift */,
 				0198BF8D1044BF094F8C4BF9 /* AppsViewModel.swift */,
 				B192E0B11D989496FBCADD29 /* AppTable.swift */,
+				DFB271023B004AC5BB2B3E74 /* CrateHeader.swift */,
 			);
 			path = Apps;
 			sourceTree = "<group>";
@@ -366,6 +372,7 @@
 				CB8D42615ED8FFE634A672EB /* AppTable.swift in Sources */,
 				78191CD6D5E1BA522FFC6658 /* AppsView.swift in Sources */,
 				6248CBA2D3D860A83D7B5675 /* AppsViewModel.swift in Sources */,
+				B60C6E08F2B5F656EF770BBD /* CrateHeader.swift in Sources */,
 				CF4F421D98984408925D650F /* DemoAppRepository.swift in Sources */,
 				B74E3B40F4A163BC8FB5DB98 /* DirectorySize.swift in Sources */,
 				CF8A2A641C661D2D1085D5C2 /* FreshnessApple.swift in Sources */,
@@ -379,6 +386,7 @@
 				6CCCEBF26E29521DC1777685 /* UninstallSheet.swift in Sources */,
 				0BAE7FADDA1E728962B9DABE /* UninstallViewModel.swift in Sources */,
 				E50BE06DC8C9C283FA132A8B /* Uninstaller.swift in Sources */,
+				35F913E4558BC6995FB234DA /* UsageEvidence.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
