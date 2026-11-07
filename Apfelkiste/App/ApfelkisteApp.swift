@@ -15,6 +15,10 @@ struct ApfelkisteApp: App {
             CommandGroup(after: .toolbar) {
                 Button("Neu laden") { Task { await model.load() } }
                     .keyboardShortcut("r")
+                Button(model.showsInspector ? "Informationen ausblenden" : "Informationen einblenden") {
+                    model.showsInspector.toggle()
+                }
+                .keyboardShortcut("i", modifiers: [.command, .option])
             }
             CommandGroup(after: .pasteboard) {
                 Button("Deinstallieren …") { model.requestUninstall() }

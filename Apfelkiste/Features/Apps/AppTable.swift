@@ -57,6 +57,7 @@ struct AppTable: View {
             }
             .width(min: 120, ideal: 150)
         }
+        .tableStyle(.inset)
         .contextMenu(forSelectionType: InstalledApp.ID.self) { ids in
             let apps = model.apps.filter { ids.contains($0.id) }
             if let app = apps.first, apps.count == 1 {

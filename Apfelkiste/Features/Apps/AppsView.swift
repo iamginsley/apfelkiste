@@ -3,7 +3,6 @@ import SwiftUI
 /// The main window: sidebar with categories, the app table and an inspector for the selected app.
 struct AppsView: View {
     @Environment(AppsViewModel.self) private var model
-    @State private var showsInspector = true
 
     var body: some View {
         @Bindable var model = model
@@ -13,8 +12,7 @@ struct AppsView: View {
         } detail: {
             AppTable()
                 .overlay { emptyState }
-                .safeAreaInset(edge: .bottom, spacing: 0) { StatusBar() }
-                .inspector(isPresented: $showsInspector) {
+                .inspector(isPresented: $model.showsInspector) {
                     AppInspector()
                         .inspectorColumnWidth(min: 260, ideal: 300, max: 380)
                 }
@@ -32,8 +30,9 @@ struct AppsView: View {
                 .help("Apps neu einlesen (⌘R)")
                 .disabled(model.isLoading)
             }
+            ToolbarSpacer(.fixed, placement: .primaryAction)
             ToolbarItem(placement: .primaryAction) {
-                Button(role: .destructive) {
+                Button {
                     model.requestUninstall()
                 } label: {
                     Label("Deinstallieren", systemImage: "trash")
@@ -41,13 +40,14 @@ struct AppsView: View {
                 .help("Ausgewählte App mit allen Resten in den Papierkorb legen (⌘⌫)")
                 .disabled(model.inspectedApp.map { $0.isProtected } ?? true)
             }
+            ToolbarSpacer(.fixed, placement: .primaryAction)
             ToolbarItem(placement: .primaryAction) {
                 Button {
-                    showsInspector.toggle()
+                    model.showsInspector.toggle()
                 } label: {
-                    Label("Informationen", systemImage: "sidebar.trailing")
+                    Label("Informationen", systemImage: "info.circle")
                 }
-                .help("Informationen ein- oder ausblenden")
+                .help("Informationen ein- oder ausblenden (⌥⌘I)")
             }
         }
         .sheet(item: $model.uninstallTarget) { app in
@@ -68,9 +68,13 @@ struct AppsView: View {
         }
     }
 
+    /// Count and total size, what Finder shows in its status bar. The subtitle keeps it at the top,
+    /// where a moved window can't hide it.
     private var subtitle: String {
         let count = model.visibleApps.count
-        return count == 1 ? String(localized: "1 App") : String(localized: "\(count) Apps")
+        let apps = count == 1 ? String(localized: "1 App") : String(localized: "\(count) Apps")
+        if model.isMeasuring { return String(localized: "\(apps) · Größen werden ermittelt …") }
+        return "\(apps) · \(model.visibleTotalSize.fileSize)"
     }
 
     @ViewBuilder
@@ -97,30 +101,6 @@ struct AppsView: View {
             model.selection = [app.id]
             if LaunchFlags.uninstall { model.requestUninstall(app) }
         }
-    }
-}
-
-/// Count and total size of what is listed, like Finder's status bar.
-private struct StatusBar: View {
-    @Environment(AppsViewModel.self) private var model
-
-    var body: some View {
-        HStack(spacing: 8) {
-            if model.isMeasuring {
-                ProgressView().controlSize(.small)
-                Text("Größen werden ermittelt …")
-            } else {
-                Text("\(model.visibleApps.count) Apps · \(model.visibleTotalSize.fileSize) belegt")
-                    .monospacedDigit()
-            }
-        }
-        .font(.callout)
-        .foregroundStyle(.secondary)
-        .frame(maxWidth: .infinity)
-        .padding(.vertical, 6)
-        .background(.bar)
-        .overlay(alignment: .top) { Divider() }
-        .accessibilityElement(children: .combine)
     }
 }
 
