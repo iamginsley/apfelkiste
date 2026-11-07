@@ -6,7 +6,7 @@ protocol AppRepository: Sendable {
     func loadApps() async -> [InstalledApp]
     /// Allocated size of an app bundle or leftover.
     func size(of url: URL) async -> Int64
-    /// Leftovers of `app` in ~/Library, with sizes.
+    /// Leftovers of `app` in ~/Library, /Library, launchd and installer receipts, with sizes.
     func leftovers(for app: InstalledApp, otherBundleIDs: Set<String>) async -> [Leftover]
     /// Quits the app if needed and moves the bundle and the chosen leftovers to the Trash.
     @MainActor func uninstall(_ app: InstalledApp, leftovers: [Leftover]) async throws
@@ -30,7 +30,7 @@ struct LocalAppRepository: AppRepository {
     func leftovers(for app: InstalledApp, otherBundleIDs: Set<String>) async -> [Leftover] {
         finder.find(for: app, otherBundleIDs: otherBundleIDs).map { leftover in
             var leftover = leftover
-            leftover.size = DirectorySize.allocatedSize(of: leftover.url)
+            if !leftover.isReceipt { leftover.size = DirectorySize.allocatedSize(of: leftover.url) }
             return leftover
         }
     }
@@ -41,6 +41,7 @@ struct LocalAppRepository: AppRepository {
         if let id = app.bundleID, Uninstaller.isRunning(bundleID: id) {
             try await Uninstaller.quit(bundleID: id, name: app.name)
         }
-        try await Uninstaller.moveToTrash([app.url] + leftovers.map(\.url))
+        let plan = UninstallPlan(app: app, appRequiresAdmin: !LeftoverFinder.isRemovableByUser(app.url), leftovers: leftovers)
+        try await Uninstaller.run(plan)
     }
 }

@@ -13,11 +13,13 @@
 		2C9A060CC69297E9141184B3 /* HomebrewCasks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D88DAC760F9BDB3DA0BAF78 /* HomebrewCasks.swift */; };
 		2D2F2514E85D37BD7C17A278 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 28749B936D255CFB441CA2D6 /* Assets.xcassets */; };
 		3E4B1F0F25388A3D9A5085F5 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEF2A2DA155FC05A07D0D9E9 /* Theme.swift */; };
+		4C86AD30897E5E530D471D9E /* PackageReceipts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99456275B3A29507D3837BEC /* PackageReceipts.swift */; };
 		5186927EA775076F4BC503B5 /* AppInspector.swift in Sources */ = {isa = PBXBuildFile; fileRef = C73DD18CCFC2A61226B18997 /* AppInspector.swift */; };
 		530AD9D0B5FCDBFC8D394710 /* ApfelkisteApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F5B210F85017838E83C6554 /* ApfelkisteApp.swift */; };
 		6248CBA2D3D860A83D7B5675 /* AppsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0198BF8D1044BF094F8C4BF9 /* AppsViewModel.swift */; };
 		663DC38368934816CA791B77 /* AppIconView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AD837634DCDEF85FEBEB3B4 /* AppIconView.swift */; };
 		6865AFDC2BAC445102A2209B /* AppRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09B3AE391F97709D9CF91441 /* AppRepository.swift */; };
+		68E5EC9DA875A83019870773 /* RealUninstallSmoke.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0810CA0BD223CD29B21F0F7 /* RealUninstallSmoke.swift */; };
 		6CCCEBF26E29521DC1777685 /* UninstallSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = D58626E063EE436EB3446DA5 /* UninstallSheet.swift */; };
 		78191CD6D5E1BA522FFC6658 /* AppsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 520BFE24B4AE1CCBAC266B4D /* AppsView.swift */; };
 		84B51C210FA9152CDAB0A1DE /* AppSidebar.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5ACC4C6EF40A85FE1AE3A56 /* AppSidebar.swift */; };
@@ -68,7 +70,9 @@
 		6874216665912E398ADBC99F /* LogicTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogicTests.swift; sourceTree = "<group>"; };
 		6AD837634DCDEF85FEBEB3B4 /* AppIconView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppIconView.swift; sourceTree = "<group>"; };
 		795BE66411C00EC1B46852D1 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		99456275B3A29507D3837BEC /* PackageReceipts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PackageReceipts.swift; sourceTree = "<group>"; };
 		A3245ACA4E75FEE6AD719A47 /* Leftover.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Leftover.swift; sourceTree = "<group>"; };
+		B0810CA0BD223CD29B21F0F7 /* RealUninstallSmoke.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealUninstallSmoke.swift; sourceTree = "<group>"; };
 		B192E0B11D989496FBCADD29 /* AppTable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppTable.swift; sourceTree = "<group>"; };
 		BD99D821241888D833C009A2 /* UninstallViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UninstallViewModel.swift; sourceTree = "<group>"; };
 		C73DD18CCFC2A61226B18997 /* AppInspector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppInspector.swift; sourceTree = "<group>"; };
@@ -122,6 +126,7 @@
 			children = (
 				6874216665912E398ADBC99F /* LogicTests.swift */,
 				1C572A09E9FD965D55FD8EC7 /* RealScanSmoke.swift */,
+				B0810CA0BD223CD29B21F0F7 /* RealUninstallSmoke.swift */,
 				34DB379654B32CAE231A53B6 /* SnapshotRender.swift */,
 			);
 			path = ApfelkisteTests;
@@ -153,6 +158,7 @@
 				1A90E1F27A6DCE8686839E63 /* DirectorySize.swift */,
 				2D88DAC760F9BDB3DA0BAF78 /* HomebrewCasks.swift */,
 				417056B0E6538D9156A037F2 /* LeftoverFinder.swift */,
+				99456275B3A29507D3837BEC /* PackageReceipts.swift */,
 				2E9AF59D1FCA3FE31CB825CA /* Uninstaller.swift */,
 			);
 			path = Services;
@@ -342,6 +348,7 @@
 			files = (
 				FF5CBED6AD07BA8B7FEECAAD /* LogicTests.swift in Sources */,
 				C7A3073C5F040ED7AE4D2EC7 /* RealScanSmoke.swift in Sources */,
+				68E5EC9DA875A83019870773 /* RealUninstallSmoke.swift in Sources */,
 				E0AEEC5777CB813325FFB70B /* SnapshotRender.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -366,6 +373,7 @@
 				CDB7BDD5F1FF2AB0FDD09734 /* InstalledApp.swift in Sources */,
 				87A5AE3B5D7997D8FD69655E /* Leftover.swift in Sources */,
 				C36F1A74F59612C10292FC38 /* LeftoverFinder.swift in Sources */,
+				4C86AD30897E5E530D471D9E /* PackageReceipts.swift in Sources */,
 				2A83CCEFAD74A09CF7025955 /* SettingsView.swift in Sources */,
 				3E4B1F0F25388A3D9A5085F5 /* Theme.swift in Sources */,
 				6CCCEBF26E29521DC1777685 /* UninstallSheet.swift in Sources */,

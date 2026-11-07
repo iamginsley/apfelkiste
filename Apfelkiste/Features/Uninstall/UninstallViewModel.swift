@@ -41,6 +41,13 @@ final class UninstallViewModel {
         (app.size ?? 0) + selectedLeftovers.reduce(0) { $0 + ($1.size ?? 0) }
     }
 
+    /// macOS asks for the admin password when any chosen leftover (or the app) belongs to root.
+    var needsAdmin: Bool { appNeedsAdmin || selectedLeftovers.contains { $0.requiresAdmin || $0.isReceipt } }
+    /// App Store apps belong to root.
+    private var appNeedsAdmin: Bool {
+        FileManager.default.fileExists(atPath: app.url.path(percentEncoded: false)) && !LeftoverFinder.isRemovableByUser(app.url)
+    }
+
     var canConfirm: Bool {
         let ready = switch phase {
         case .ready, .failed: true
