@@ -1,0 +1,4 @@
+// Copy this file to Config.xcconfig (git-ignored) and fill in your values.
+
+// Apple Developer Team ID (personal team, never the INNIO team)
+DEVELOPMENT_TEAM = 2567P974L9

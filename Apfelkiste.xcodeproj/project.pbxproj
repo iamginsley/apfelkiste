@@ -1,0 +1,630 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		0BAE7FADDA1E728962B9DABE /* UninstallViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD99D821241888D833C009A2 /* UninstallViewModel.swift */; };
+		0DE751F7B579A177D59A619F /* AppScanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22BBE2D75792DFFDEF8D69BE /* AppScanner.swift */; };
+		2A83CCEFAD74A09CF7025955 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB15D28ABB31577BE56668C6 /* SettingsView.swift */; };
+		2C9A060CC69297E9141184B3 /* HomebrewCasks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D88DAC760F9BDB3DA0BAF78 /* HomebrewCasks.swift */; };
+		2D2F2514E85D37BD7C17A278 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 28749B936D255CFB441CA2D6 /* Assets.xcassets */; };
+		3E4B1F0F25388A3D9A5085F5 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEF2A2DA155FC05A07D0D9E9 /* Theme.swift */; };
+		5186927EA775076F4BC503B5 /* AppInspector.swift in Sources */ = {isa = PBXBuildFile; fileRef = C73DD18CCFC2A61226B18997 /* AppInspector.swift */; };
+		530AD9D0B5FCDBFC8D394710 /* ApfelkisteApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F5B210F85017838E83C6554 /* ApfelkisteApp.swift */; };
+		6248CBA2D3D860A83D7B5675 /* AppsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0198BF8D1044BF094F8C4BF9 /* AppsViewModel.swift */; };
+		663DC38368934816CA791B77 /* AppIconView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AD837634DCDEF85FEBEB3B4 /* AppIconView.swift */; };
+		6865AFDC2BAC445102A2209B /* AppRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09B3AE391F97709D9CF91441 /* AppRepository.swift */; };
+		6CCCEBF26E29521DC1777685 /* UninstallSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = D58626E063EE436EB3446DA5 /* UninstallSheet.swift */; };
+		78191CD6D5E1BA522FFC6658 /* AppsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 520BFE24B4AE1CCBAC266B4D /* AppsView.swift */; };
+		84B51C210FA9152CDAB0A1DE /* AppSidebar.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5ACC4C6EF40A85FE1AE3A56 /* AppSidebar.swift */; };
+		87A5AE3B5D7997D8FD69655E /* Leftover.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3245ACA4E75FEE6AD719A47 /* Leftover.swift */; };
+		B74E3B40F4A163BC8FB5DB98 /* DirectorySize.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A90E1F27A6DCE8686839E63 /* DirectorySize.swift */; };
+		C36F1A74F59612C10292FC38 /* LeftoverFinder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 417056B0E6538D9156A037F2 /* LeftoverFinder.swift */; };
+		C7A3073C5F040ED7AE4D2EC7 /* RealScanSmoke.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C572A09E9FD965D55FD8EC7 /* RealScanSmoke.swift */; };
+		CB8D42615ED8FFE634A672EB /* AppTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = B192E0B11D989496FBCADD29 /* AppTable.swift */; };
+		CDB7BDD5F1FF2AB0FDD09734 /* InstalledApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 632DB6158741293C9CCA3CD0 /* InstalledApp.swift */; };
+		CF4F421D98984408925D650F /* DemoAppRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 672069F9F7ABFA399217C09A /* DemoAppRepository.swift */; };
+		CF8A2A641C661D2D1085D5C2 /* FreshnessApple.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F58291E5E1B9663A89D74C2 /* FreshnessApple.swift */; };
+		E0AEEC5777CB813325FFB70B /* SnapshotRender.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34DB379654B32CAE231A53B6 /* SnapshotRender.swift */; };
+		E50BE06DC8C9C283FA132A8B /* Uninstaller.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E9AF59D1FCA3FE31CB825CA /* Uninstaller.swift */; };
+		EFC7D16ED6B5D2E4FCAD7B2D /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 795BE66411C00EC1B46852D1 /* PrivacyInfo.xcprivacy */; };
+		FF5CBED6AD07BA8B7FEECAAD /* LogicTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6874216665912E398ADBC99F /* LogicTests.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		D337B03346934CB49B1D7920 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C682C4111E30F9C822C07768 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = BD49E47A63CA6571A8F0ECD0;
+			remoteInfo = Apfelkiste;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		0198BF8D1044BF094F8C4BF9 /* AppsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppsViewModel.swift; sourceTree = "<group>"; };
+		0833F88D33F321DBB11FEABD /* ApfelkisteTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ApfelkisteTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		09B3AE391F97709D9CF91441 /* AppRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppRepository.swift; sourceTree = "<group>"; };
+		1A90E1F27A6DCE8686839E63 /* DirectorySize.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DirectorySize.swift; sourceTree = "<group>"; };
+		1C572A09E9FD965D55FD8EC7 /* RealScanSmoke.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealScanSmoke.swift; sourceTree = "<group>"; };
+		22BBE2D75792DFFDEF8D69BE /* AppScanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppScanner.swift; sourceTree = "<group>"; };
+		25CFC18903609B4BB185A78D /* Apfelkiste.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Apfelkiste.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		28749B936D255CFB441CA2D6 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		2D88DAC760F9BDB3DA0BAF78 /* HomebrewCasks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomebrewCasks.swift; sourceTree = "<group>"; };
+		2E9AF59D1FCA3FE31CB825CA /* Uninstaller.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Uninstaller.swift; sourceTree = "<group>"; };
+		34DB379654B32CAE231A53B6 /* SnapshotRender.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnapshotRender.swift; sourceTree = "<group>"; };
+		417056B0E6538D9156A037F2 /* LeftoverFinder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeftoverFinder.swift; sourceTree = "<group>"; };
+		45CA0410094D583922BF7AB8 /* Project.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Project.xcconfig; sourceTree = "<group>"; };
+		4F58291E5E1B9663A89D74C2 /* FreshnessApple.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FreshnessApple.swift; sourceTree = "<group>"; };
+		4F5B210F85017838E83C6554 /* ApfelkisteApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApfelkisteApp.swift; sourceTree = "<group>"; };
+		520BFE24B4AE1CCBAC266B4D /* AppsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppsView.swift; sourceTree = "<group>"; };
+		5B75F84BBE47691C7ECD899B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		632DB6158741293C9CCA3CD0 /* InstalledApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstalledApp.swift; sourceTree = "<group>"; };
+		672069F9F7ABFA399217C09A /* DemoAppRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoAppRepository.swift; sourceTree = "<group>"; };
+		6874216665912E398ADBC99F /* LogicTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogicTests.swift; sourceTree = "<group>"; };
+		6AD837634DCDEF85FEBEB3B4 /* AppIconView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppIconView.swift; sourceTree = "<group>"; };
+		795BE66411C00EC1B46852D1 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		A3245ACA4E75FEE6AD719A47 /* Leftover.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Leftover.swift; sourceTree = "<group>"; };
+		B192E0B11D989496FBCADD29 /* AppTable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppTable.swift; sourceTree = "<group>"; };
+		BD99D821241888D833C009A2 /* UninstallViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UninstallViewModel.swift; sourceTree = "<group>"; };
+		C73DD18CCFC2A61226B18997 /* AppInspector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppInspector.swift; sourceTree = "<group>"; };
+		D58626E063EE436EB3446DA5 /* UninstallSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UninstallSheet.swift; sourceTree = "<group>"; };
+		DF4062E98B9AD2F10DB23E15 /* Apfelkiste.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Apfelkiste.entitlements; sourceTree = "<group>"; };
+		E5ACC4C6EF40A85FE1AE3A56 /* AppSidebar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSidebar.swift; sourceTree = "<group>"; };
+		EEF2A2DA155FC05A07D0D9E9 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
+		FB15D28ABB31577BE56668C6 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		00CC35DC55BC5BF1B6211293 /* Demo */ = {
+			isa = PBXGroup;
+			children = (
+				672069F9F7ABFA399217C09A /* DemoAppRepository.swift */,
+			);
+			path = Demo;
+			sourceTree = "<group>";
+		};
+		153B90505DC82E0A80144ADF /* Repositories */ = {
+			isa = PBXGroup;
+			children = (
+				09B3AE391F97709D9CF91441 /* AppRepository.swift */,
+			);
+			path = Repositories;
+			sourceTree = "<group>";
+		};
+		1CB0E9C28DF71C7974365185 /* Core */ = {
+			isa = PBXGroup;
+			children = (
+				00CC35DC55BC5BF1B6211293 /* Demo */,
+				F08D99E813909FF3850F0E23 /* Models */,
+				153B90505DC82E0A80144ADF /* Repositories */,
+				65724FB57CD65B070DD5D323 /* Services */,
+			);
+			path = Core;
+			sourceTree = "<group>";
+		};
+		25BDE96158D0326CD6BF3E51 /* Design */ = {
+			isa = PBXGroup;
+			children = (
+				6AD837634DCDEF85FEBEB3B4 /* AppIconView.swift */,
+				4F58291E5E1B9663A89D74C2 /* FreshnessApple.swift */,
+				EEF2A2DA155FC05A07D0D9E9 /* Theme.swift */,
+			);
+			path = Design;
+			sourceTree = "<group>";
+		};
+		33C3D13B979B0FCDCE7F14B7 /* ApfelkisteTests */ = {
+			isa = PBXGroup;
+			children = (
+				6874216665912E398ADBC99F /* LogicTests.swift */,
+				1C572A09E9FD965D55FD8EC7 /* RealScanSmoke.swift */,
+				34DB379654B32CAE231A53B6 /* SnapshotRender.swift */,
+			);
+			path = ApfelkisteTests;
+			sourceTree = "<group>";
+		};
+		350BD00C9430543C3AF38108 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				4F5B210F85017838E83C6554 /* ApfelkisteApp.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		4CCE5A0F26896C877E475602 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				DF4062E98B9AD2F10DB23E15 /* Apfelkiste.entitlements */,
+				28749B936D255CFB441CA2D6 /* Assets.xcassets */,
+				5B75F84BBE47691C7ECD899B /* Info.plist */,
+				795BE66411C00EC1B46852D1 /* PrivacyInfo.xcprivacy */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		65724FB57CD65B070DD5D323 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				22BBE2D75792DFFDEF8D69BE /* AppScanner.swift */,
+				1A90E1F27A6DCE8686839E63 /* DirectorySize.swift */,
+				2D88DAC760F9BDB3DA0BAF78 /* HomebrewCasks.swift */,
+				417056B0E6538D9156A037F2 /* LeftoverFinder.swift */,
+				2E9AF59D1FCA3FE31CB825CA /* Uninstaller.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		81A089A82AF6CD08E8DAFD16 /* Apfelkiste */ = {
+			isa = PBXGroup;
+			children = (
+				350BD00C9430543C3AF38108 /* App */,
+				1CB0E9C28DF71C7974365185 /* Core */,
+				25BDE96158D0326CD6BF3E51 /* Design */,
+				E97879780159643AD4D17C66 /* Features */,
+				4CCE5A0F26896C877E475602 /* Resources */,
+			);
+			path = Apfelkiste;
+			sourceTree = "<group>";
+		};
+		8E58BC2D3EB01A7228644508 = {
+			isa = PBXGroup;
+			children = (
+				81A089A82AF6CD08E8DAFD16 /* Apfelkiste */,
+				33C3D13B979B0FCDCE7F14B7 /* ApfelkisteTests */,
+				D314E5F926C5DD0FA2FC63BC /* Configs */,
+				BAF6B30BFA9D1319F553860A /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		98EFEEAF71290A8248597F20 /* Uninstall */ = {
+			isa = PBXGroup;
+			children = (
+				D58626E063EE436EB3446DA5 /* UninstallSheet.swift */,
+				BD99D821241888D833C009A2 /* UninstallViewModel.swift */,
+			);
+			path = Uninstall;
+			sourceTree = "<group>";
+		};
+		BA6CE38E3C31C363F495A74F /* Apps */ = {
+			isa = PBXGroup;
+			children = (
+				C73DD18CCFC2A61226B18997 /* AppInspector.swift */,
+				E5ACC4C6EF40A85FE1AE3A56 /* AppSidebar.swift */,
+				520BFE24B4AE1CCBAC266B4D /* AppsView.swift */,
+				0198BF8D1044BF094F8C4BF9 /* AppsViewModel.swift */,
+				B192E0B11D989496FBCADD29 /* AppTable.swift */,
+			);
+			path = Apps;
+			sourceTree = "<group>";
+		};
+		BAF6B30BFA9D1319F553860A /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				25CFC18903609B4BB185A78D /* Apfelkiste.app */,
+				0833F88D33F321DBB11FEABD /* ApfelkisteTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		D314E5F926C5DD0FA2FC63BC /* Configs */ = {
+			isa = PBXGroup;
+			children = (
+				45CA0410094D583922BF7AB8 /* Project.xcconfig */,
+			);
+			path = Configs;
+			sourceTree = "<group>";
+		};
+		DCF446281C40137C3907D3A1 /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				FB15D28ABB31577BE56668C6 /* SettingsView.swift */,
+			);
+			path = Settings;
+			sourceTree = "<group>";
+		};
+		E97879780159643AD4D17C66 /* Features */ = {
+			isa = PBXGroup;
+			children = (
+				BA6CE38E3C31C363F495A74F /* Apps */,
+				DCF446281C40137C3907D3A1 /* Settings */,
+				98EFEEAF71290A8248597F20 /* Uninstall */,
+			);
+			path = Features;
+			sourceTree = "<group>";
+		};
+		F08D99E813909FF3850F0E23 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				632DB6158741293C9CCA3CD0 /* InstalledApp.swift */,
+				A3245ACA4E75FEE6AD719A47 /* Leftover.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		066A141D81FECEA7C9EA32B5 /* ApfelkisteTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = DB5226C697CB8EE714ACBCDF /* Build configuration list for PBXNativeTarget "ApfelkisteTests" */;
+			buildPhases = (
+				43387D8FEAF0FFABF9E115AA /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				D8B0CE510BBE26D5BA03C730 /* PBXTargetDependency */,
+			);
+			name = ApfelkisteTests;
+			packageProductDependencies = (
+			);
+			productName = ApfelkisteTests;
+			productReference = 0833F88D33F321DBB11FEABD /* ApfelkisteTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		BD49E47A63CA6571A8F0ECD0 /* Apfelkiste */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 56EE53946EB560FA51DEAC0B /* Build configuration list for PBXNativeTarget "Apfelkiste" */;
+			buildPhases = (
+				76A639284A9C157898873048 /* Sources */,
+				06331C9732ED83C85EB57640 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Apfelkiste;
+			packageProductDependencies = (
+			);
+			productName = Apfelkiste;
+			productReference = 25CFC18903609B4BB185A78D /* Apfelkiste.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		C682C4111E30F9C822C07768 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+					066A141D81FECEA7C9EA32B5 = {
+						DevelopmentTeam = "";
+						ProvisioningStyle = Automatic;
+					};
+					BD49E47A63CA6571A8F0ECD0 = {
+						DevelopmentTeam = "";
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = 5298DFE6B119036FF72F7AAA /* Build configuration list for PBXProject "Apfelkiste" */;
+			developmentRegion = de;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				de,
+			);
+			mainGroup = 8E58BC2D3EB01A7228644508;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = BAF6B30BFA9D1319F553860A /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				BD49E47A63CA6571A8F0ECD0 /* Apfelkiste */,
+				066A141D81FECEA7C9EA32B5 /* ApfelkisteTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		06331C9732ED83C85EB57640 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2D2F2514E85D37BD7C17A278 /* Assets.xcassets in Resources */,
+				EFC7D16ED6B5D2E4FCAD7B2D /* PrivacyInfo.xcprivacy in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		43387D8FEAF0FFABF9E115AA /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FF5CBED6AD07BA8B7FEECAAD /* LogicTests.swift in Sources */,
+				C7A3073C5F040ED7AE4D2EC7 /* RealScanSmoke.swift in Sources */,
+				E0AEEC5777CB813325FFB70B /* SnapshotRender.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		76A639284A9C157898873048 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				530AD9D0B5FCDBFC8D394710 /* ApfelkisteApp.swift in Sources */,
+				663DC38368934816CA791B77 /* AppIconView.swift in Sources */,
+				5186927EA775076F4BC503B5 /* AppInspector.swift in Sources */,
+				6865AFDC2BAC445102A2209B /* AppRepository.swift in Sources */,
+				0DE751F7B579A177D59A619F /* AppScanner.swift in Sources */,
+				84B51C210FA9152CDAB0A1DE /* AppSidebar.swift in Sources */,
+				CB8D42615ED8FFE634A672EB /* AppTable.swift in Sources */,
+				78191CD6D5E1BA522FFC6658 /* AppsView.swift in Sources */,
+				6248CBA2D3D860A83D7B5675 /* AppsViewModel.swift in Sources */,
+				CF4F421D98984408925D650F /* DemoAppRepository.swift in Sources */,
+				B74E3B40F4A163BC8FB5DB98 /* DirectorySize.swift in Sources */,
+				CF8A2A641C661D2D1085D5C2 /* FreshnessApple.swift in Sources */,
+				2C9A060CC69297E9141184B3 /* HomebrewCasks.swift in Sources */,
+				CDB7BDD5F1FF2AB0FDD09734 /* InstalledApp.swift in Sources */,
+				87A5AE3B5D7997D8FD69655E /* Leftover.swift in Sources */,
+				C36F1A74F59612C10292FC38 /* LeftoverFinder.swift in Sources */,
+				2A83CCEFAD74A09CF7025955 /* SettingsView.swift in Sources */,
+				3E4B1F0F25388A3D9A5085F5 /* Theme.swift in Sources */,
+				6CCCEBF26E29521DC1777685 /* UninstallSheet.swift in Sources */,
+				0BAE7FADDA1E728962B9DABE /* UninstallViewModel.swift in Sources */,
+				E50BE06DC8C9C283FA132A8B /* Uninstaller.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		D8B0CE510BBE26D5BA03C730 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = BD49E47A63CA6571A8F0ECD0 /* Apfelkiste */;
+			targetProxy = D337B03346934CB49B1D7920 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		16443E39EB562F6F8ACFCB3F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.iamginsley.apfelkiste.tests;
+				SDKROOT = macosx;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Apfelkiste.app/Contents/MacOS/Apfelkiste";
+			};
+			name = Debug;
+		};
+		26F054DB940C87A4CE6F8255 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CODE_SIGN_ENTITLEMENTS = Apfelkiste/Resources/Apfelkiste.entitlements;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_PREVIEWS = YES;
+				INFOPLIST_FILE = Apfelkiste/Resources/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.iamginsley.apfelkiste;
+				PRODUCT_NAME = Apfelkiste;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		2EE522CE3E3C3B8778AC69BD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.iamginsley.apfelkiste.tests;
+				SDKROOT = macosx;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Apfelkiste.app/Contents/MacOS/Apfelkiste";
+			};
+			name = Release;
+		};
+		4B5CBF0432B2EA090ED6B6F4 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 45CA0410094D583922BF7AB8 /* Project.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_STRICT_CONCURRENCY = complete;
+				SWIFT_VERSION = 6.0;
+			};
+			name = Debug;
+		};
+		6C5E101962551D46A5E3AAAB /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 45CA0410094D583922BF7AB8 /* Project.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_STRICT_CONCURRENCY = complete;
+				SWIFT_VERSION = 6.0;
+			};
+			name = Release;
+		};
+		DB5ACEA91D70D75271ACAE8C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CODE_SIGN_ENTITLEMENTS = Apfelkiste/Resources/Apfelkiste.entitlements;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_PREVIEWS = YES;
+				INFOPLIST_FILE = Apfelkiste/Resources/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.iamginsley.apfelkiste;
+				PRODUCT_NAME = Apfelkiste;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		5298DFE6B119036FF72F7AAA /* Build configuration list for PBXProject "Apfelkiste" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4B5CBF0432B2EA090ED6B6F4 /* Debug */,
+				6C5E101962551D46A5E3AAAB /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		56EE53946EB560FA51DEAC0B /* Build configuration list for PBXNativeTarget "Apfelkiste" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				26F054DB940C87A4CE6F8255 /* Debug */,
+				DB5ACEA91D70D75271ACAE8C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		DB5226C697CB8EE714ACBCDF /* Build configuration list for PBXNativeTarget "ApfelkisteTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				16443E39EB562F6F8ACFCB3F /* Debug */,
+				2EE522CE3E3C3B8778AC69BD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = C682C4111E30F9C822C07768 /* Project object */;
+}

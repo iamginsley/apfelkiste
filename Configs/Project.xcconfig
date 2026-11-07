@@ -1,0 +1,7 @@
+// Shared build settings. Contains no secrets and is committed.
+// Local values (signing team) live in ../Config.xcconfig, which is git-ignored.
+// Copy Config.example.xcconfig to get started.
+
+DEVELOPMENT_TEAM =
+
+#include? "../Config.xcconfig"
