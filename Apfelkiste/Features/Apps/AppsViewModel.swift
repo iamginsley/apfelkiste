@@ -19,6 +19,7 @@ final class AppsViewModel {
     var searchText = ""
     var sortOrder = [KeyPathComparator(\InstalledApp.sortName)]
     var selection = Set<InstalledApp.ID>()
+    var showsInspector = true
     /// The app whose uninstall sheet is open.
     var uninstallTarget: InstalledApp?
 
