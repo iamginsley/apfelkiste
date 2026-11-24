@@ -362,6 +362,38 @@ struct AppsViewModelTests {
         #expect(lastUsedText(running) == "Läuft gerade")
     }
 
+    @Test func typeSelectJumpsToPrefix() async {
+        let model = await makeModel()
+        let start = Date(timeIntervalSince1970: 1_800_000_000)
+        // "K", "a", "r" quickly: Kartenhaus, not Kaffeeklatsch or Keynote.
+        model.typeSelect("k", at: start)
+        #expect(model.selectedApps.first?.name == "Kaffeeklatsch")
+        model.typeSelect("a", at: start.addingTimeInterval(0.3))
+        model.typeSelect("r", at: start.addingTimeInterval(0.6))
+        #expect(model.selectedApps.map(\.name) == ["Kartenhaus"])
+        // After a pause a new search starts.
+        let id = model.typeSelect("W", at: start.addingTimeInterval(3))
+        #expect(model.selectedApps.map(\.name) == ["Wetterfrosch"])
+        #expect(id == model.selectedApps.first?.id)
+    }
+
+    @Test func typeSelectCyclesOnRepeatedLetter() async {
+        let model = await makeModel()
+        let start = Date(timeIntervalSince1970: 1_800_000_000)
+        model.typeSelect("k", at: start)
+        model.typeSelect("k", at: start.addingTimeInterval(0.2))
+        #expect(model.selectedApps.map(\.name) == ["Kartenhaus"])
+        model.typeSelect("k", at: start.addingTimeInterval(0.4))
+        #expect(model.selectedApps.map(\.name) == ["Keynote"])
+    }
+
+    @Test func typeSelectIgnoresCaseAndUnknown() async {
+        let model = await makeModel()
+        #expect(model.typeSelect("x") == nil)
+        #expect(model.selectedApps.isEmpty)
+        #expect(model.typeSelect(" ", at: .now.addingTimeInterval(5)) == nil)
+    }
+
     @Test func uninstallRemovesFromList() async {
         let model = await makeModel()
         let app = model.apps[0]
