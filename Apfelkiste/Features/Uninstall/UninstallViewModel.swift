@@ -9,6 +9,8 @@ final class UninstallViewModel {
         case ready
         case working
         case done
+        /// The app is in the Trash, but these leftovers are still in place.
+        case leftBehind([URL])
         case failed(String)
     }
 
@@ -65,12 +67,19 @@ final class UninstallViewModel {
         guard canConfirm else { return false }
         phase = .working
         do {
-            try await repository.uninstall(app, leftovers: selectedLeftovers)
-            phase = .done
+            let remaining = try await repository.uninstall(app, leftovers: selectedLeftovers)
+            phase = remaining.isEmpty ? .done : .leftBehind(remaining)
             return true
         } catch {
             phase = .failed(error.localizedDescription)
             return false
+        }
+    }
+
+    var isFinished: Bool {
+        switch phase {
+        case .done, .leftBehind: true
+        default: false
         }
     }
 

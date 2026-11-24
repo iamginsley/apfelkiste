@@ -113,16 +113,38 @@ enum Uninstaller {
         }
     }
 
-    static func run(_ plan: UninstallPlan) async throws {
+    /// Returns the items that are still in place: macOS protects other apps' containers, so moving them can
+    /// fail without Full Disk Access even though the app itself is gone. Those are reported, not thrown.
+    static func run(_ plan: UninstallPlan) async throws -> [URL] {
         // Root work first: if the password prompt is cancelled, nothing has been touched yet.
         let trash = try FileManager.default.url(for: .trashDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
         if let script = plan.adminScript(destinations: UninstallPlan.trashDestinations(for: plan.adminTrash, in: trash)) {
             try runAsAdmin(script)
         }
         stopAgents(plan.agentLabels)
-        if !plan.userTrash.isEmpty {
-            _ = try await NSWorkspace.shared.recycle(plan.userTrash)
+        var leftBehind: [URL] = []
+        // One by one, so one protected folder doesn't hide which of the others made it.
+        for url in plan.userTrash {
+            do {
+                _ = try await NSWorkspace.shared.recycle([url])
+            } catch {
+                leftBehind.append(url)
+            }
         }
+        if !leftBehind.isEmpty { recycleThroughFinder(leftBehind) }
+        return leftBehind.filter { FileManager.default.fileExists(atPath: $0.path(percentEncoded: false)) }
+    }
+
+    /// Second try through Finder, which may move protected containers the user asks it to. macOS asks once
+    /// whether Apfelkiste may control Finder; if that is declined, the items simply stay.
+    private static func recycleThroughFinder(_ urls: [URL]) {
+        let files = urls.map { "POSIX file \"\(appleScriptEscaped($0.plainPath))\"" }.joined(separator: ", ")
+        var error: NSDictionary?
+        NSAppleScript(source: "tell application \"Finder\" to delete {\(files)}")?.executeAndReturnError(&error)
+    }
+
+    private static func appleScriptEscaped(_ text: String) -> String {
+        text.replacingOccurrences(of: "\\", with: "\\\\").replacingOccurrences(of: "\"", with: "\\\"")
     }
 
     /// Stops launch agents in the user's GUI domain so they don't keep running until the next login.
@@ -140,8 +162,7 @@ enum Uninstaller {
 
     /// Runs the script as root after macOS asks for the admin password ("Apfelkiste möchte Änderungen vornehmen").
     private static func runAsAdmin(_ script: String) throws {
-        let escaped = script.replacingOccurrences(of: "\\", with: "\\\\").replacingOccurrences(of: "\"", with: "\\\"")
-        let source = "do shell script \"\(escaped)\" with prompt \"Apfelkiste möchte Reste entfernen, die zum System gehören.\" with administrator privileges"
+        let source = "do shell script \"\(appleScriptEscaped(script))\" with prompt \"Apfelkiste möchte Reste entfernen, die zum System gehören.\" with administrator privileges"
         var error: NSDictionary?
         NSAppleScript(source: source)?.executeAndReturnError(&error)
         guard let error else { return }
