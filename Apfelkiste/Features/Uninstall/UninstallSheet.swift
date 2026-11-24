@@ -11,7 +11,6 @@ struct UninstallSheet: View {
     var body: some View {
         VStack(spacing: 0) {
             header
-                .padding(20)
             Divider()
             content
                 .frame(minHeight: 220)
@@ -19,22 +18,31 @@ struct UninstallSheet: View {
             footer
                 .padding(16)
         }
-        .frame(width: 560)
+        .frame(width: 580)
+        .preferredColorScheme(.dark)
         .task { await model.search() }
     }
 
+    /// Hero band in the app's colors: big icon over the crate gradient, like the main window.
     private var header: some View {
-        HStack(spacing: 14) {
-            AppIconView(url: model.app.url, size: 56)
-            VStack(alignment: .leading, spacing: 4) {
-                Text("„\(model.app.name)“ deinstallieren?")
-                    .font(.title3.weight(.semibold))
-                Text("Die App und die ausgewählten Reste kommen in den Papierkorb. Von dort kannst du alles zurückholen.")
-                    .foregroundStyle(.secondary)
-                    .fixedSize(horizontal: false, vertical: true)
-            }
+        VStack(spacing: 10) {
+            AppIconView(url: model.app.url, size: 72)
+                .shadow(color: .black.opacity(0.35), radius: 12, y: 6)
+            Text("„\(model.app.name)“ deinstallieren?")
+                .font(.system(.title2, design: .rounded).weight(.bold))
+                .multilineTextAlignment(.center)
+            Text("Die App und die ausgewählten Reste kommen in den Papierkorb. Von dort kannst du alles zurückholen.")
+                .font(.callout)
+                .foregroundStyle(.white.opacity(0.8))
+                .multilineTextAlignment(.center)
+                .fixedSize(horizontal: false, vertical: true)
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
+        .foregroundStyle(.white)
+        .frame(maxWidth: .infinity)
+        .padding(.horizontal, 28)
+        .padding(.top, 28)
+        .padding(.bottom, 22)
+        .background { CrateBackground(scene: AppFilter.source(model.app.source).scene) }
     }
 
     @ViewBuilder
@@ -180,6 +188,9 @@ struct UninstallSheet: View {
                     }
                 }
                 .keyboardShortcut(.defaultAction)
+                .buttonStyle(.borderedProminent)
+                .tint(Color(hex: 0xC62F3A))
+                .controlSize(.large)
                 .disabled(!model.canConfirm)
             }
         }

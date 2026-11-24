@@ -13,6 +13,7 @@ struct AppTable: View {
                 HStack(spacing: 8) {
                     AppIconView(url: app.url)
                     Text(app.name)
+                        .fontWeight(.medium)
                     if app.isProtected {
                         Image(systemName: "lock.fill")
                             .foregroundStyle(.secondary)
@@ -22,13 +23,13 @@ struct AppTable: View {
                     }
                 }
             }
-            .width(min: 180, ideal: 260)
+            .width(min: 160, ideal: 220)
 
             TableColumn("Version", value: \.sortVersion) { app in
                 Text(app.version ?? "–")
                     .foregroundStyle(.secondary)
             }
-            .width(min: 60, ideal: 90)
+            .width(min: 50, ideal: 64)
 
             TableColumn("Größe", value: \.sortSize) { app in
                 HStack(spacing: 8) {
@@ -49,7 +50,7 @@ struct AppTable: View {
                 Text(app.source.title)
                     .foregroundStyle(.secondary)
             }
-            .width(min: 90, ideal: 120)
+            .width(min: 80, ideal: 104)
 
             TableColumn("Zuletzt aktiv", value: \.sortLastUsed) { app in
                 HStack(spacing: 6) {
@@ -61,6 +62,10 @@ struct AppTable: View {
             .width(min: 120, ideal: 150)
         }
         .tableStyle(.inset)
+        .alternatingRowBackgrounds(.disabled)
+        .scrollContentBackground(.hidden)
+        // Keep the last rows clear of the floating uninstall bar.
+        .contentMargins(.bottom, model.inspectedApp != nil ? 110 : 8, for: .scrollContent)
         .contextMenu(forSelectionType: InstalledApp.ID.self) { ids in
             let apps = model.apps.filter { ids.contains($0.id) }
             if let app = apps.first, apps.count == 1 {

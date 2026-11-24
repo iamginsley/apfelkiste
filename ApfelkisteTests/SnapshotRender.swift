@@ -22,7 +22,7 @@ struct SnapshotRender {
             model.filter = filter
             model.sortOrder = [KeyPathComparator(\InstalledApp.sortSize, order: .reverse)]
             if let selected, let app = model.apps.first(where: { $0.name == selected }) { model.selection = [app.id] }
-            try await snapshot(AppsView().environment(model), size: CGSize(width: 1180, height: 640),
+            try await snapshot(AppsView().environment(model), size: CGSize(width: 1240, height: 780),
                                appearance: appearance, to: dir.appending(path: "\(name).png"))
         }
 
@@ -30,7 +30,7 @@ struct SnapshotRender {
         let sheet = UninstallViewModel(app: app, repository: DemoAppRepository(), otherBundleIDs: [])
         await sheet.search()
         try await snapshot(UninstallSheet(model: sheet).environment(AppsViewModel(repository: DemoAppRepository())),
-                           size: CGSize(width: 560, height: 480), appearance: .aqua, to: dir.appending(path: "deinstallieren.png"))
+                           size: CGSize(width: 580, height: 620), appearance: .aqua, to: dir.appending(path: "deinstallieren.png"))
     }
 
     private func snapshot(_ view: some View, size: CGSize, appearance: NSAppearance.Name, to url: URL) async throws {

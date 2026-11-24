@@ -1,8 +1,8 @@
 import AppKit
 import SwiftUI
 
-// Colors come from the asset catalog. The accent is Apfelgrün, the app's own note instead of system blue:
-// #2E7D32 in light mode (white labels on it 5.1:1, on white 5.1:1), #33853A in dark mode (white labels 4.6:1).
+// The window is always dark and colored by its section (see CrateScene). The accent is Apfelgrün:
+// #2E7D32 / #33853A in dark mode (white labels 4.6:1).
 // The apple colors point at macOS system colors, so increased contrast comes for free: .appleFresh (red),
 // .appleRipening (orange), .appleWindfall (brown), .leaf (green). Labels always use system label colors.
 
@@ -16,7 +16,7 @@ extension Font {
 
 enum Theme {
     static let minTapSize: CGFloat = 44
-    static let listIconSize: CGFloat = 20
+    static let listIconSize: CGFloat = 26
     static let inspectorIconSize: CGFloat = 96
 }
 

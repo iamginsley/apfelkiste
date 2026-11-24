@@ -1,8 +1,8 @@
 import AppKit
 import SwiftUI
 
-/// Details of the selected app, laid out like Finder's Get Info: plain content on the window
-/// background, no cards. Glass belongs to the toolbar and sidebar, not here.
+/// Details of the selected app, like Finder's Get Info, on a frosted card next to the list.
+/// Uninstalling lives in the floating bar.
 struct AppInspector: View {
     @Environment(AppsViewModel.self) private var model
     /// Leftovers of the shown app, loaded in the background: what uninstalling would really free.
@@ -87,13 +87,8 @@ struct AppInspector: View {
                     .font(.callout)
                     .foregroundStyle(.secondary)
             } else {
-                VStack(alignment: .leading, spacing: 8) {
-                    Button("Deinstallieren …", systemImage: "trash", role: .destructive) {
-                        model.requestUninstall(app)
-                    }
-                    Button("Im Finder zeigen", systemImage: "folder") {
-                        NSWorkspace.shared.activateFileViewerSelecting([app.url])
-                    }
+                Button("Im Finder zeigen", systemImage: "folder") {
+                    NSWorkspace.shared.activateFileViewerSelecting([app.url])
                 }
                 .controlSize(.large)
                 .buttonStyle(.bordered)
