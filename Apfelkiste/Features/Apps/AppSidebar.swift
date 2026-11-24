@@ -1,5 +1,6 @@
 import SwiftUI
 
+/// Sections as colored module tiles. The sidebar's glass picks up the section's gradient behind it.
 struct AppSidebar: View {
     @Environment(AppsViewModel.self) private var model
 
@@ -7,24 +8,27 @@ struct AppSidebar: View {
         @Bindable var model = model
         List(selection: $model.filter) {
             Section("Kiste") {
-                row(.all, "Alle Apps") { Image(systemName: "shippingbox").foregroundStyle(Color.accentColor) }
-                row(.windfall, Freshness.windfall.title) { FreshnessApple(freshness: .windfall, size: 15) }
-                    .help("Apps, die du seit \(model.windfallDays) Tagen nicht geöffnet hast")
+                row(.all, "Alle Apps")
+                row(.windfall, Freshness.windfall.title)
+                    .help("Apps, die du seit \(model.windfallDays) Tagen nicht benutzt hast")
             }
             Section("Herkunft") {
                 ForEach([AppSource.appStore, .homebrew, .direct, .apple], id: \.self) { source in
-                    row(.source(source), source.title) {
-                        Image(systemName: source.symbol).foregroundStyle(source.tint)
-                    }
+                    row(.source(source), source.title)
                 }
             }
         }
         .listStyle(.sidebar)
     }
 
-    private func row(_ filter: AppFilter, _ title: String, @ViewBuilder icon: () -> some View) -> some View {
-        Label { Text(title) } icon: { icon() }
-            .badge(model.count(filter))
-            .tag(filter)
+    private func row(_ filter: AppFilter, _ title: String) -> some View {
+        Label {
+            Text(title)
+        } icon: {
+            SceneTile(scene: filter.scene, size: 22)
+        }
+        .badge(model.count(filter))
+        .tag(filter)
+        .padding(.vertical, 2)
     }
 }

@@ -1,27 +1,48 @@
 import SwiftUI
 
-/// The main window: sidebar with categories, the app table and an inspector for the selected app.
+/// The main window: a colored scene per section, hero on top, the app list and the details as frosted cards,
+/// and a floating bar with the big round uninstall button for the selected app.
 struct AppsView: View {
     @Environment(AppsViewModel.self) private var model
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
         @Bindable var model = model
         NavigationSplitView {
             AppSidebar()
-                .navigationSplitViewColumnWidth(min: 190, ideal: 210)
+                .navigationSplitViewColumnWidth(min: 200, ideal: 220)
         } detail: {
             VStack(spacing: 0) {
-                CrateHeader()
-                AppTable()
-                    .overlay { emptyState }
-            }
-                .inspector(isPresented: $model.showsInspector) {
-                    AppInspector()
-                        .inspectorColumnWidth(min: 260, ideal: 300, max: 380)
+                CrateHero()
+                HStack(alignment: .top, spacing: 16) {
+                    AppTable()
+                        .overlay { emptyState }
+                        .frostedCard()
+                    if model.showsInspector, model.inspectedApp != nil {
+                        AppInspector()
+                            .frame(width: 300)
+                            .frostedCard()
+                            .transition(.move(edge: .trailing).combined(with: .opacity))
+                    }
                 }
+                .padding(.horizontal, 20)
+                .padding(.bottom, 20)
+            }
+            .overlay(alignment: .bottom) {
+                if let app = model.inspectedApp, !app.isProtected {
+                    UninstallBar(app: app)
+                        .padding(.bottom, 28)
+                        .transition(.move(edge: .bottom).combined(with: .opacity))
+                }
+            }
+            .animation(reduceMotion ? nil : .spring(duration: 0.35), value: model.inspectedApp?.id)
+            .animation(reduceMotion ? nil : .spring(duration: 0.35), value: model.showsInspector)
         }
-        .navigationTitle(title)
-        .navigationSubtitle(subtitle)
+        .containerBackground(for: .window) { CrateBackground(scene: model.filter.scene) }
+        .toolbarBackgroundVisibility(.hidden, for: .windowToolbar)
+        .toolbar(removing: .title)
+        .navigationTitle(model.filter.windowTitle)
+        .preferredColorScheme(.dark)
         .searchable(text: $model.searchText, placement: .toolbar, prompt: "Apps durchsuchen")
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
@@ -32,16 +53,6 @@ struct AppsView: View {
                 }
                 .help("Apps neu einlesen (⌘R)")
                 .disabled(model.isLoading)
-            }
-            ToolbarSpacer(.fixed, placement: .primaryAction)
-            ToolbarItem(placement: .primaryAction) {
-                Button {
-                    model.requestUninstall()
-                } label: {
-                    Label("Deinstallieren", systemImage: "trash")
-                }
-                .help("Ausgewählte App mit allen Resten in den Papierkorb legen (⌘⌫)")
-                .disabled(model.inspectedApp.map { $0.isProtected } ?? true)
             }
             ToolbarSpacer(.fixed, placement: .primaryAction)
             ToolbarItem(placement: .primaryAction) {
@@ -63,23 +74,6 @@ struct AppsView: View {
         }
     }
 
-    private var title: String {
-        switch model.filter {
-        case .all: String(localized: "Alle Apps")
-        case .windfall: Freshness.windfall.title
-        case .source(let source): source.title
-        }
-    }
-
-    /// Count and total size, what Finder shows in its status bar. The subtitle keeps it at the top,
-    /// where a moved window can't hide it.
-    private var subtitle: String {
-        let count = model.visibleApps.count
-        let apps = count == 1 ? String(localized: "1 App") : String(localized: "\(count) Apps")
-        if model.isMeasuring { return String(localized: "\(apps) · Größen werden ermittelt …") }
-        return "\(apps) · \(model.visibleTotalSize.fileSize)"
-    }
-
     @ViewBuilder
     private var emptyState: some View {
         if model.isLoading && model.apps.isEmpty {
@@ -90,7 +84,7 @@ struct AppsView: View {
             ContentUnavailableView {
                 Label { Text("Kein Fallobst") } icon: { FreshnessApple(freshness: .fresh, size: 44) }
             } description: {
-                Text("Alles frisch gepflückt. Jede App wurde in den letzten \(model.windfallDays) Tagen benutzt.")
+                Text("Alles frisch gepflückt. Jede App war in den letzten \(model.windfallDays) Tagen aktiv.")
             }
         } else if model.visibleApps.isEmpty && !model.isLoading {
             ContentUnavailableView("Keine Apps", systemImage: "shippingbox",
@@ -107,10 +101,96 @@ struct AppsView: View {
     }
 }
 
+extension AppFilter {
+    /// Window title for the Window menu and Mission Control; the hero shows the visible title.
+    var windowTitle: String {
+        switch self {
+        case .all: String(localized: "Alle Apps")
+        case .windfall: Freshness.windfall.title
+        case .source(let source): source.title
+        }
+    }
+}
+
+extension View {
+    /// Content cards on the scene: a standard material (not Liquid Glass, which belongs to controls) with a
+    /// hairline so the edge stays visible on every gradient.
+    func frostedCard() -> some View {
+        background(.ultraThinMaterial, in: .rect(cornerRadius: 20, style: .continuous))
+            .clipShape(.rect(cornerRadius: 20, style: .continuous))
+            .overlay(RoundedRectangle(cornerRadius: 20, style: .continuous).strokeBorder(.white.opacity(0.12)))
+    }
+}
+
+/// Floating control for the selected app: what it frees, and the big round button. This floats above the
+/// content, so it is the one place that gets Liquid Glass.
+struct UninstallBar: View {
+    let app: InstalledApp
+    @Environment(AppsViewModel.self) private var model
+
+    var body: some View {
+        HStack(spacing: 14) {
+            HStack(spacing: 12) {
+                AppIconView(url: app.url, size: 36)
+                VStack(alignment: .leading, spacing: 1) {
+                    Text(app.name)
+                        .font(.headline)
+                        .lineLimit(1)
+                    Text(app.size.map { "\($0.fileSize) plus Reste" } ?? String(localized: "Größe wird ermittelt …"))
+                        .font(.callout)
+                        .monospacedDigit()
+                        .foregroundStyle(.secondary)
+                }
+            }
+            .padding(.leading, 10)
+            .padding(.trailing, 22)
+            .padding(.vertical, 10)
+            .glassEffect(.regular, in: .capsule)
+
+            Button {
+                model.requestUninstall(app)
+            } label: {
+                VStack(spacing: 2) {
+                    Image(systemName: "trash.fill")
+                        .font(.system(size: 20, weight: .semibold))
+                    Text("Entfernen")
+                        .font(.caption.weight(.bold))
+                }
+                .foregroundStyle(.white)
+                .frame(width: 76, height: 76)
+                .background(
+                    Circle().fill(LinearGradient(colors: [Color(hex: 0xC62F3A), Color(hex: 0x9E1F2B)],
+                                                 startPoint: .top, endPoint: .bottom))
+                )
+                .overlay(Circle().strokeBorder(.white.opacity(0.25), lineWidth: 1))
+                .contentShape(Circle())
+            }
+            .buttonStyle(RoundButtonStyle())
+            .help("\(app.name) mit allen Resten in den Papierkorb legen (⌘⌫)")
+            .accessibilityLabel("\(app.name) deinstallieren")
+        }
+    }
+}
+
+/// Presses in a little; grows a touch on hover.
+struct RoundButtonStyle: ButtonStyle {
+    @State private var hovering = false
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .scaleEffect(configuration.isPressed ? 0.94 : hovering ? 1.05 : 1)
+            .shadow(color: .black.opacity(0.35), radius: hovering ? 16 : 10, y: 6)
+            .animation(reduceMotion ? nil : .spring(duration: 0.25), value: hovering)
+            .animation(reduceMotion ? nil : .spring(duration: 0.2), value: configuration.isPressed)
+            .onHover { hovering = $0 }
+    }
+}
+
 #if DEBUG
 #Preview {
     AppsView()
         .environment(AppsViewModel(repository: DemoAppRepository()))
-        .frame(width: 1100, height: 650)
+        .frame(width: 1180, height: 760)
 }
 #endif
