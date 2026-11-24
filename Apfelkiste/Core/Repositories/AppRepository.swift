@@ -9,7 +9,8 @@ protocol AppRepository: Sendable {
     /// Leftovers of `app` in ~/Library, /Library, launchd and installer receipts, with sizes.
     func leftovers(for app: InstalledApp, otherBundleIDs: Set<String>) async -> [Leftover]
     /// Quits the app if needed and moves the bundle and the chosen leftovers to the Trash.
-    @MainActor func uninstall(_ app: InstalledApp, leftovers: [Leftover]) async throws
+    /// Returns the leftovers that could not be moved; the app itself is gone when this returns.
+    @MainActor func uninstall(_ app: InstalledApp, leftovers: [Leftover]) async throws -> [URL]
 }
 
 struct LocalAppRepository: AppRepository {
@@ -36,12 +37,12 @@ struct LocalAppRepository: AppRepository {
     }
 
     @MainActor
-    func uninstall(_ app: InstalledApp, leftovers: [Leftover]) async throws {
+    func uninstall(_ app: InstalledApp, leftovers: [Leftover]) async throws -> [URL] {
         guard !app.isProtected else { throw Uninstaller.Failure.protected(app.name) }
         if let id = app.bundleID, Uninstaller.isRunning(bundleID: id) {
             try await Uninstaller.quit(bundleID: id, name: app.name)
         }
         let plan = UninstallPlan(app: app, appRequiresAdmin: !LeftoverFinder.isRemovableByUser(app.url), leftovers: leftovers)
-        try await Uninstaller.run(plan)
+        return try await Uninstaller.run(plan)
     }
 }

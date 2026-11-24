@@ -69,8 +69,9 @@ struct DemoAppRepository: AppRepository {
     }
 
     @MainActor
-    func uninstall(_ app: InstalledApp, leftovers: [Leftover]) async throws {
+    func uninstall(_ app: InstalledApp, leftovers: [Leftover]) async throws -> [URL] {
         try await Task.sleep(for: .milliseconds(700))
+        return []
     }
 }
 

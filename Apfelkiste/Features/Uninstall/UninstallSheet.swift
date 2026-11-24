@@ -64,8 +64,30 @@ struct UninstallSheet: View {
                 } description: {
                     Text("\(model.app.name) ist raus aus der Kiste.")
                 }
+            case .leftBehind(let urls):
+                leftBehind(urls)
             default:
                 list
+            }
+        }
+    }
+
+    /// The app is gone, but macOS kept some folders (usually other apps' containers) out of reach.
+    private func leftBehind(_ urls: [URL]) -> some View {
+        ContentUnavailableView {
+            Label { Text("App im Papierkorb, \(urls.count) Reste geblieben") } icon: {
+                FreshnessApple(freshness: .ripening, size: 44)
+            }
+        } description: {
+            Text("macOS schützt die Daten anderer Apps. Gib Apfelkiste Festplattenvollzugriff und lösch die Reste noch einmal, oder zieh sie im Finder selbst in den Papierkorb.")
+        } actions: {
+            HStack {
+                Button("Im Finder zeigen") { NSWorkspace.shared.activateFileViewerSelecting(urls) }
+                Button("Festplattenvollzugriff …") {
+                    if let url = URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_AllFiles") {
+                        NSWorkspace.shared.open(url)
+                    }
+                }
             }
         }
     }
@@ -159,7 +181,8 @@ struct UninstallSheet: View {
             if case .failed(let message) = model.phase {
                 Label(message, systemImage: "exclamationmark.triangle.fill")
                     .foregroundStyle(.red)
-                    .lineLimit(2)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .help(message)
             } else if model.phase == .ready, !model.isSelf {
                 Text(model.needsAdmin
                      ? "Frei werden \(model.totalSize.fileSize) · fragt nach deinem Passwort"
@@ -168,7 +191,7 @@ struct UninstallSheet: View {
                     .foregroundStyle(.secondary)
             }
             Spacer()
-            if model.phase == .done || model.isSelf {
+            if model.isFinished || model.isSelf {
                 Button("Fertig") { dismiss() }
                     .keyboardShortcut(.defaultAction)
             } else {

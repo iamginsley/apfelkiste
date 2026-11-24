@@ -33,6 +33,8 @@ targets:
         # No sandbox: the app reads other apps' bundles and ~/Library and moves them to the Trash,
         # which the App Sandbox forbids. Distribution is Developer ID signed and notarized.
         com.apple.security.app-sandbox: false
+        # Asks Finder to trash leftovers macOS protects from other apps (containers), as a second try.
+        com.apple.security.automation.apple-events: true
     info:
       path: Apfelkiste/Resources/Info.plist
       properties:
@@ -43,6 +45,7 @@ targets:
         CFBundleVersion: "$(CURRENT_PROJECT_VERSION)"
         LSApplicationCategoryType: public.app-category.utilities
         NSHumanReadableCopyright: © 2026 Dominik Gintsberger
+        NSAppleEventsUsageDescription: Apfelkiste bittet den Finder, geschützte Reste in den Papierkorb zu legen.
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.iamginsley.apfelkiste
