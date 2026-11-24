@@ -122,6 +122,47 @@ final class AppsViewModel {
     /// The inspector shows one app at a time.
     var inspectedApp: InstalledApp? { selectedApps.count == 1 ? selectedApps.first : nil }
 
+    // MARK: Type to select
+
+    /// What was typed so far, like Finder: "a", "r", "c" in quick succession jump to the first app named "Arc…".
+    private var typedPrefix = ""
+    private var lastKeystroke = Date.distantPast
+    /// A pause this long starts a new search.
+    static let typeSelectTimeout: TimeInterval = 1.0
+
+    /// Selects the first visible app (in the current sort order) whose name starts with what was typed.
+    /// Typing the same letter again with no longer match cycles through the apps with that letter.
+    /// Returns the selected app's ID, so the list can scroll to it.
+    @discardableResult
+    func typeSelect(_ character: Character, at time: Date = .now) -> InstalledApp.ID? {
+        if time.timeIntervalSince(lastKeystroke) > Self.typeSelectTimeout { typedPrefix = "" }
+        lastKeystroke = time
+        if character == " " && typedPrefix.isEmpty { return nil }
+        typedPrefix.append(character)
+
+        let apps = visibleApps
+        let prefix = Self.folded(typedPrefix)
+        let match: InstalledApp?
+        if let first = apps.first(where: { Self.folded($0.name).hasPrefix(prefix) }) {
+            match = first
+        } else if let letter = typedPrefix.first, typedPrefix.allSatisfy({ $0 == letter }) {
+            // "s", "s": no app starts with "ss", so move on to the next app starting with "s".
+            let candidates = apps.filter { Self.folded($0.name).hasPrefix(Self.folded(String(letter))) }
+            let current = candidates.firstIndex { selection.contains($0.id) }
+            match = candidates.isEmpty ? nil : candidates[current.map { ($0 + 1) % candidates.count } ?? 0]
+        } else {
+            match = nil
+        }
+        guard let match else { return nil }
+        selection = [match.id]
+        return match.id
+    }
+
+    /// Case- and accent-insensitive, so "o" finds "Ö" and "über" finds "Über".
+    private static func folded(_ text: String) -> String {
+        text.folding(options: [.caseInsensitive, .diacriticInsensitive, .widthInsensitive], locale: .current)
+    }
+
     // MARK: Uninstall
 
     func requestUninstall(_ app: InstalledApp? = nil) {
