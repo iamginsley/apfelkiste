@@ -7,11 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		09DAAF5EB59DD2C1943D8D55 /* OrphanFinder.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCB5A3F622DD2BF5DA8168E5 /* OrphanFinder.swift */; };
 		0BAE7FADDA1E728962B9DABE /* UninstallViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD99D821241888D833C009A2 /* UninstallViewModel.swift */; };
 		0DE751F7B579A177D59A619F /* AppScanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22BBE2D75792DFFDEF8D69BE /* AppScanner.swift */; };
 		2A83CCEFAD74A09CF7025955 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB15D28ABB31577BE56668C6 /* SettingsView.swift */; };
 		2C9A060CC69297E9141184B3 /* HomebrewCasks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D88DAC760F9BDB3DA0BAF78 /* HomebrewCasks.swift */; };
 		2D2F2514E85D37BD7C17A278 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 28749B936D255CFB441CA2D6 /* Assets.xcassets */; };
+		33E8374E3323D39A87B0927D /* FullDiskAccess.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79CFA6A89ED3C59E82A3590B /* FullDiskAccess.swift */; };
 		35F913E4558BC6995FB234DA /* UsageEvidence.swift in Sources */ = {isa = PBXBuildFile; fileRef = E49D210AA828AEA736C39025 /* UsageEvidence.swift */; };
 		3CDCC8D914277352B782E0D4 /* CrateHero.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5CBDF569BBBC1E79AEDAB0C /* CrateHero.swift */; };
 		3E4B1F0F25388A3D9A5085F5 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEF2A2DA155FC05A07D0D9E9 /* Theme.swift */; };
@@ -27,6 +29,7 @@
 		78191CD6D5E1BA522FFC6658 /* AppsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 520BFE24B4AE1CCBAC266B4D /* AppsView.swift */; };
 		84B51C210FA9152CDAB0A1DE /* AppSidebar.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5ACC4C6EF40A85FE1AE3A56 /* AppSidebar.swift */; };
 		87A5AE3B5D7997D8FD69655E /* Leftover.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3245ACA4E75FEE6AD719A47 /* Leftover.swift */; };
+		88F3D24084451F381822C7F1 /* OrphansView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2997B17D2EA0AA04C2ECB8B1 /* OrphansView.swift */; };
 		B74E3B40F4A163BC8FB5DB98 /* DirectorySize.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A90E1F27A6DCE8686839E63 /* DirectorySize.swift */; };
 		C36F1A74F59612C10292FC38 /* LeftoverFinder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 417056B0E6538D9156A037F2 /* LeftoverFinder.swift */; };
 		C7A3073C5F040ED7AE4D2EC7 /* RealScanSmoke.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C572A09E9FD965D55FD8EC7 /* RealScanSmoke.swift */; };
@@ -59,6 +62,7 @@
 		22BBE2D75792DFFDEF8D69BE /* AppScanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppScanner.swift; sourceTree = "<group>"; };
 		25CFC18903609B4BB185A78D /* Apfelkiste.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Apfelkiste.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		28749B936D255CFB441CA2D6 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		2997B17D2EA0AA04C2ECB8B1 /* OrphansView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrphansView.swift; sourceTree = "<group>"; };
 		2D88DAC760F9BDB3DA0BAF78 /* HomebrewCasks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomebrewCasks.swift; sourceTree = "<group>"; };
 		2E9AF59D1FCA3FE31CB825CA /* Uninstaller.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Uninstaller.swift; sourceTree = "<group>"; };
 		34DB379654B32CAE231A53B6 /* SnapshotRender.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnapshotRender.swift; sourceTree = "<group>"; };
@@ -73,6 +77,7 @@
 		6874216665912E398ADBC99F /* LogicTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogicTests.swift; sourceTree = "<group>"; };
 		6AD837634DCDEF85FEBEB3B4 /* AppIconView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppIconView.swift; sourceTree = "<group>"; };
 		795BE66411C00EC1B46852D1 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		79CFA6A89ED3C59E82A3590B /* FullDiskAccess.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FullDiskAccess.swift; sourceTree = "<group>"; };
 		99456275B3A29507D3837BEC /* PackageReceipts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PackageReceipts.swift; sourceTree = "<group>"; };
 		A3245ACA4E75FEE6AD719A47 /* Leftover.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Leftover.swift; sourceTree = "<group>"; };
 		A5CBDF569BBBC1E79AEDAB0C /* CrateHero.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrateHero.swift; sourceTree = "<group>"; };
@@ -87,6 +92,7 @@
 		E5ACC4C6EF40A85FE1AE3A56 /* AppSidebar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSidebar.swift; sourceTree = "<group>"; };
 		EEF2A2DA155FC05A07D0D9E9 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 		FB15D28ABB31577BE56668C6 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		FCB5A3F622DD2BF5DA8168E5 /* OrphanFinder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrphanFinder.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -128,6 +134,14 @@
 			path = Design;
 			sourceTree = "<group>";
 		};
+		2923D747B7851EA9E621AEB7 /* Orphans */ = {
+			isa = PBXGroup;
+			children = (
+				2997B17D2EA0AA04C2ECB8B1 /* OrphansView.swift */,
+			);
+			path = Orphans;
+			sourceTree = "<group>";
+		};
 		33C3D13B979B0FCDCE7F14B7 /* ApfelkisteTests */ = {
 			isa = PBXGroup;
 			children = (
@@ -163,8 +177,10 @@
 			children = (
 				22BBE2D75792DFFDEF8D69BE /* AppScanner.swift */,
 				1A90E1F27A6DCE8686839E63 /* DirectorySize.swift */,
+				79CFA6A89ED3C59E82A3590B /* FullDiskAccess.swift */,
 				2D88DAC760F9BDB3DA0BAF78 /* HomebrewCasks.swift */,
 				417056B0E6538D9156A037F2 /* LeftoverFinder.swift */,
+				FCB5A3F622DD2BF5DA8168E5 /* OrphanFinder.swift */,
 				99456275B3A29507D3837BEC /* PackageReceipts.swift */,
 				2E9AF59D1FCA3FE31CB825CA /* Uninstaller.swift */,
 				E49D210AA828AEA736C39025 /* UsageEvidence.swift */,
@@ -245,6 +261,7 @@
 			isa = PBXGroup;
 			children = (
 				BA6CE38E3C31C363F495A74F /* Apps */,
+				2923D747B7851EA9E621AEB7 /* Orphans */,
 				DCF446281C40137C3907D3A1 /* Settings */,
 				98EFEEAF71290A8248597F20 /* Uninstall */,
 			);
@@ -380,10 +397,13 @@
 				CF4F421D98984408925D650F /* DemoAppRepository.swift in Sources */,
 				B74E3B40F4A163BC8FB5DB98 /* DirectorySize.swift in Sources */,
 				CF8A2A641C661D2D1085D5C2 /* FreshnessApple.swift in Sources */,
+				33E8374E3323D39A87B0927D /* FullDiskAccess.swift in Sources */,
 				2C9A060CC69297E9141184B3 /* HomebrewCasks.swift in Sources */,
 				CDB7BDD5F1FF2AB0FDD09734 /* InstalledApp.swift in Sources */,
 				87A5AE3B5D7997D8FD69655E /* Leftover.swift in Sources */,
 				C36F1A74F59612C10292FC38 /* LeftoverFinder.swift in Sources */,
+				09DAAF5EB59DD2C1943D8D55 /* OrphanFinder.swift in Sources */,
+				88F3D24084451F381822C7F1 /* OrphansView.swift in Sources */,
 				4C86AD30897E5E530D471D9E /* PackageReceipts.swift in Sources */,
 				2A83CCEFAD74A09CF7025955 /* SettingsView.swift in Sources */,
 				3E4B1F0F25388A3D9A5085F5 /* Theme.swift in Sources */,

@@ -73,6 +73,8 @@ struct AppTable: View {
                     Button("Öffnen") { NSWorkspace.shared.open(app.url) }
                     Button("Im Finder zeigen") { NSWorkspace.shared.activateFileViewerSelecting([app.url]) }
                     Divider()
+                    Button("Zurücksetzen …") { model.requestReset(app) }
+                        .disabled(app.isProtected)
                     Button("Deinstallieren …", role: .destructive) { model.requestUninstall(app) }
                         .disabled(app.isProtected)
                 }

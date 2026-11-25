@@ -241,6 +241,83 @@ struct UninstallPlanTests {
     }
 }
 
+struct OrphanFinderTests {
+    private func finder(_ dir: TempDir, installedAnywhere: Set<String> = []) -> OrphanFinder {
+        OrphanFinder(library: dir.url, systemLibrary: dir.url.appending(path: "SystemLib"),
+                     isInstalledAnywhere: { installedAnywhere.contains($0) },
+                     isRemovableByUser: { !$0.path(percentEncoded: false).contains("/SystemLib/") })
+    }
+
+    @Test func findsLeftoversOfRemovedAppsGroupedByBundleID() {
+        let dir = TempDir()
+        dir.folder("Containers/de.weg.radl")
+        dir.folder("Containers/de.weg.radl.widget")
+        dir.file("Preferences/de.weg.radl.plist")
+        dir.folder("Caches/de.weg.schach")
+        dir.folder("Application Support/de.da.pixel")
+        dir.folder("Application Support/de.da.pixel.helper")
+        dir.folder("Application Support/Google")
+        dir.folder("Caches/com.apple.Safari")
+        dir.folder("Containers/com.apple.garageband10")
+        dir.folder("Caches/de.anderswo.tool")
+
+        let groups = finder(dir, installedAnywhere: ["de.anderswo.tool"]).find(installed: ["de.da.pixel"])
+        #expect(groups.map(\.bundleID) == ["com.apple.garageband10", "de.weg.radl", "de.weg.schach"])
+        let radl = groups.first { $0.bundleID == "de.weg.radl" }
+        #expect(radl?.leftovers.count == 3)
+        #expect(radl?.displayName == "Radl")
+    }
+
+    @Test func offersServicesWhoseProgramIsGone() {
+        let dir = TempDir()
+        writePlist(["Label": "de.weg.radl.updater", "Program": "/Library/PrivilegedHelperTools/de.weg.radl.updater"],
+                   to: dir.url.appending(path: "SystemLib/LaunchDaemons/de.weg.radl.updater.plist"))
+        writePlist(["Label": "de.da.dienst", "ProgramArguments": ["/bin/sh", "-c", "true"]],
+                   to: dir.url.appending(path: "LaunchAgents/de.da.dienst.plist"))
+        let groups = finder(dir).find(installed: [])
+        #expect(groups.map(\.bundleID) == ["de.weg.radl.updater"])
+        let daemon = groups.first?.leftovers.first
+        #expect(daemon?.launchdLabel == "de.weg.radl.updater")
+        #expect(daemon?.requiresAdmin == true)
+    }
+
+    @Test(arguments: [("com.foo.app", true), ("com.foo", false), ("Google", false), ("com..x", false),
+                      ("de.app-name.Pro_2", true), ("123.foo.bar", false)])
+    func recognizesBundleIDs(name: String, expected: Bool) {
+        #expect(OrphanFinder.looksLikeBundleID(name) == expected)
+    }
+}
+
+@MainActor
+struct ResetTests {
+    @Test func resetKeepsServicesAndTheApp() async {
+        let app = makeApp(name: "Tonstudio", bundleID: "de.beispiel.tonstudio")
+        let model = UninstallViewModel(app: app, mode: .reset, repository: DemoAppRepository(), otherBundleIDs: [])
+        await model.search()
+        #expect(model.leftovers.allSatisfy(UninstallViewModel.isAppData))
+        #expect(model.totalSize == model.selectedLeftovers.reduce(0) { $0 + ($1.size ?? 0) })
+        #expect(!UninstallViewModel.isAppData(Leftover(url: URL(filePath: "/x.plist"), kind: .launchAgents, match: .bundleID)))
+        #expect(await model.confirm())
+        #expect(model.phase == .done)
+    }
+
+    @Test func leftoverOnlyPlanHasNoApp() {
+        let plan = UninstallPlan(leftovers: [Leftover(url: URL(filePath: "/Users/me/Library/Caches/x"), kind: .caches, match: .bundleID)])
+        #expect(plan.userTrash.map(\.path) == ["/Users/me/Library/Caches/x"])
+        #expect(!plan.needsAdmin)
+    }
+
+    @Test func removingOrphansDropsThemFromTheList() async throws {
+        let model = AppsViewModel(repository: DemoAppRepository(), defaults: UserDefaults(suiteName: UUID().uuidString)!)
+        await model.loadOrphans()
+        #expect(model.count(.orphans) == 3)
+        model.orphanSelection = [model.orphanGroups[0].id]
+        try await model.removeSelectedOrphans()
+        #expect(model.count(.orphans) == 2)
+        #expect(model.orphanSelection.isEmpty)
+    }
+}
+
 struct PackageReceiptsTests {
     @Test func relativeToInstallRoot() {
         #expect(PackageReceipts.relativePath(of: "/Applications/X.app", in: URL(filePath: "/Applications")) == "X.app")
@@ -399,7 +476,7 @@ struct AppsViewModelTests {
         let app = model.apps[0]
         model.selection = [app.id]
         model.requestUninstall()
-        #expect(model.uninstallTarget == app)
+        #expect(model.removalRequest == RemovalRequest(app: app, mode: .uninstall))
         model.didUninstall(app)
         #expect(!model.apps.contains(app))
         #expect(model.selection.isEmpty)

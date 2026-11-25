@@ -14,7 +14,12 @@ struct UninstallPlan: Equatable {
     var packageIDs: [String] = []
 
     init(app: InstalledApp, appRequiresAdmin: Bool, leftovers: [Leftover]) {
-        if appRequiresAdmin { adminTrash.append(app.url) } else { userTrash.append(app.url) }
+        self.init(leftovers: leftovers)
+        if appRequiresAdmin { adminTrash.insert(app.url, at: 0) } else { userTrash.insert(app.url, at: 0) }
+    }
+
+    /// Leftovers only: resetting an app, or what removed apps left behind.
+    init(leftovers: [Leftover]) {
         for leftover in leftovers {
             if let package = leftover.packageID {
                 packageIDs.append(package)

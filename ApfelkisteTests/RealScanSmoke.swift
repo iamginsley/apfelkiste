@@ -24,4 +24,15 @@ struct RealScanSmoke {
             }
         }
     }
+
+    @Test(.enabled(if: ProcessInfo.processInfo.environment["REAL_SCAN"] != nil))
+    func orphans() async {
+        let repository = LocalAppRepository()
+        let apps = await repository.loadApps()
+        let groups = await repository.orphans(installed: Set(apps.compactMap(\.bundleID)))
+        print("ORPHANS: \(groups.count) groups, \(groups.reduce(0) { $0 + $1.size }.fileSize), full disk access: \(repository.hasFullDiskAccess())")
+        for group in groups {
+            print("ORPHANS: \(group.bundleID) \(group.size.fileSize) \(group.kindsSummary)\(group.requiresAdmin ? " 🔒" : "")")
+        }
+    }
 }

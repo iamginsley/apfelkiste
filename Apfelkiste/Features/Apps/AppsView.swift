@@ -1,3 +1,4 @@
+import AppKit
 import SwiftUI
 
 /// The main window: a colored scene per section, hero on top, the app list and the details as frosted cards,
@@ -13,29 +14,50 @@ struct AppsView: View {
                 .navigationSplitViewColumnWidth(min: 200, ideal: 220)
         } detail: {
             VStack(spacing: 0) {
-                CrateHero()
-                HStack(alignment: .top, spacing: 16) {
-                    AppTable()
-                        .overlay { emptyState }
-                        .frostedCard()
-                    if model.showsInspector, model.inspectedApp != nil {
-                        AppInspector()
-                            .frame(width: 300)
-                            .frostedCard()
-                            .transition(.move(edge: .trailing).combined(with: .opacity))
-                    }
+                if model.filter == .orphans { OrphanHero() } else { CrateHero() }
+                if !model.hasFullDiskAccess && !model.accessHintDismissed {
+                    AccessHint()
+                        .padding(.horizontal, 20)
+                        .padding(.bottom, 14)
+                        .transition(.opacity)
                 }
-                .padding(.horizontal, 20)
-                .padding(.bottom, 20)
+                if model.filter == .orphans {
+                    OrphanList()
+                        .frostedCard()
+                        .padding(.horizontal, 20)
+                        .padding(.bottom, 20)
+                } else {
+                    HStack(alignment: .top, spacing: 16) {
+                        AppTable()
+                            .overlay { emptyState }
+                            .frostedCard()
+                        if model.showsInspector, model.inspectedApp != nil {
+                            AppInspector()
+                                .frame(width: 300)
+                                .frostedCard()
+                                .transition(.move(edge: .trailing).combined(with: .opacity))
+                        }
+                    }
+                    .padding(.horizontal, 20)
+                    .padding(.bottom, 20)
+                }
             }
             .overlay(alignment: .bottom) {
-                if let app = model.inspectedApp, !app.isProtected {
+                if model.filter == .orphans {
+                    if !model.orphanSelection.isEmpty {
+                        OrphanBar()
+                            .padding(.bottom, 28)
+                            .transition(.move(edge: .bottom).combined(with: .opacity))
+                    }
+                } else if let app = model.inspectedApp, !app.isProtected {
                     UninstallBar(app: app)
                         .padding(.bottom, 28)
                         .transition(.move(edge: .bottom).combined(with: .opacity))
                 }
             }
             .animation(reduceMotion ? nil : .spring(duration: 0.35), value: model.inspectedApp?.id)
+            .animation(reduceMotion ? nil : .spring(duration: 0.35), value: model.orphanSelection.isEmpty)
+            .animation(reduceMotion ? nil : .default, value: model.hasFullDiskAccess)
             .animation(reduceMotion ? nil : .spring(duration: 0.35), value: model.showsInspector)
         }
         .containerBackground(for: .window) { CrateBackground(scene: model.filter.scene) }
@@ -64,13 +86,19 @@ struct AppsView: View {
                 .help("Informationen ein- oder ausblenden (⌥⌘I)")
             }
         }
-        .sheet(item: $model.uninstallTarget) { app in
-            UninstallSheet(model: UninstallViewModel(app: app, repository: model.repository,
+        .sheet(item: $model.removalRequest) { request in
+            UninstallSheet(model: UninstallViewModel(app: request.app, mode: request.mode, repository: model.repository,
                                                      otherBundleIDs: model.otherBundleIDs))
         }
         .task {
             await model.load()
             applyLaunchFlags()
+        }
+        .onReceive(NotificationCenter.default.publisher(for: NSApplication.didBecomeActiveNotification)) { _ in
+            // Coming back from System Settings: with Full Disk Access, look again for what was hidden.
+            let hadAccess = model.hasFullDiskAccess
+            model.refreshAccess()
+            if !hadAccess && model.hasFullDiskAccess { Task { await model.loadOrphans() } }
         }
     }
 
@@ -107,6 +135,7 @@ extension AppFilter {
         switch self {
         case .all: String(localized: "Alle Apps")
         case .windfall: Freshness.windfall.title
+        case .orphans: String(localized: "Reste")
         case .source(let source): source.title
         }
     }
@@ -147,28 +176,41 @@ struct UninstallBar: View {
             .padding(.vertical, 10)
             .glassEffect(.regular, in: .capsule)
 
-            Button {
-                model.requestUninstall(app)
-            } label: {
-                VStack(spacing: 2) {
+            RoundRemoveButton { model.requestUninstall(app) }
+                .help("\(app.name) mit allen Resten in den Papierkorb legen (⌘⌫)")
+                .accessibilityLabel("\(app.name) deinstallieren")
+        }
+    }
+}
+
+/// The big red round button of the floating bars.
+struct RoundRemoveButton: View {
+    var working = false
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            VStack(spacing: 2) {
+                if working {
+                    ProgressView().controlSize(.small).tint(.white)
+                } else {
                     Image(systemName: "trash.fill")
                         .font(.system(size: 20, weight: .semibold))
-                    Text("Entfernen")
-                        .font(.caption.weight(.bold))
                 }
-                .foregroundStyle(.white)
-                .frame(width: 76, height: 76)
-                .background(
-                    Circle().fill(LinearGradient(colors: [Color(hex: 0xC62F3A), Color(hex: 0x9E1F2B)],
-                                                 startPoint: .top, endPoint: .bottom))
-                )
-                .overlay(Circle().strokeBorder(.white.opacity(0.25), lineWidth: 1))
-                .contentShape(Circle())
+                Text("Entfernen")
+                    .font(.caption.weight(.bold))
             }
-            .buttonStyle(RoundButtonStyle())
-            .help("\(app.name) mit allen Resten in den Papierkorb legen (⌘⌫)")
-            .accessibilityLabel("\(app.name) deinstallieren")
+            .foregroundStyle(.white)
+            .frame(width: 76, height: 76)
+            .background(
+                Circle().fill(LinearGradient(colors: [Color(hex: 0xC62F3A), Color(hex: 0x9E1F2B)],
+                                             startPoint: .top, endPoint: .bottom))
+            )
+            .overlay(Circle().strokeBorder(.white.opacity(0.25), lineWidth: 1))
+            .contentShape(Circle())
         }
+        .buttonStyle(RoundButtonStyle())
+        .disabled(working)
     }
 }
 

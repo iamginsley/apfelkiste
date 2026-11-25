@@ -1,7 +1,8 @@
 import AppKit
 import SwiftUI
 
-/// Shows what will go to the Trash (the app plus its leftovers) and lets the user untick anything.
+/// Shows what will go to the Trash (the app plus its leftovers, or for a reset only its data) and lets the
+/// user untick anything.
 struct UninstallSheet: View {
     @State var model: UninstallViewModel
     @Environment(AppsViewModel.self) private var apps
@@ -28,10 +29,12 @@ struct UninstallSheet: View {
         VStack(spacing: 10) {
             AppIconView(url: model.app.url, size: 72)
                 .shadow(color: .black.opacity(0.35), radius: 12, y: 6)
-            Text("„\(model.app.name)“ deinstallieren?")
+            Text(isReset ? "„\(model.app.name)“ zurücksetzen?" : "„\(model.app.name)“ deinstallieren?")
                 .font(.system(.title2, design: .rounded).weight(.bold))
                 .multilineTextAlignment(.center)
-            Text("Die App und die ausgewählten Reste kommen in den Papierkorb. Von dort kannst du alles zurückholen.")
+            Text(isReset
+                 ? "Einstellungen und Daten kommen in den Papierkorb. Die App bleibt und startet wie frisch installiert."
+                 : "Die App und die ausgewählten Reste kommen in den Papierkorb. Von dort kannst du alles zurückholen.")
                 .font(.callout)
                 .foregroundStyle(.white.opacity(0.8))
                 .multilineTextAlignment(.center)
@@ -58,6 +61,12 @@ struct UninstallSheet: View {
             case .searching:
                 ProgressView("Reste werden gesucht …")
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
+            case .done where isReset:
+                ContentUnavailableView {
+                    Label { Text("Wie neu") } icon: { FreshnessApple(freshness: .fresh, size: 44) }
+                } description: {
+                    Text("\(model.app.name) startet beim nächsten Öffnen wie frisch installiert.")
+                }
             case .done:
                 ContentUnavailableView {
                     Label { Text("Im Papierkorb") } icon: { FreshnessApple(freshness: .windfall, size: 44) }
@@ -75,7 +84,9 @@ struct UninstallSheet: View {
     /// The app is gone, but macOS kept some folders (usually other apps' containers) out of reach.
     private func leftBehind(_ urls: [URL]) -> some View {
         ContentUnavailableView {
-            Label { Text("App im Papierkorb, \(urls.count) Reste geblieben") } icon: {
+            Label {
+                Text(isReset ? "Zurückgesetzt, \(urls.count) Ordner geblieben" : "App im Papierkorb, \(urls.count) Reste geblieben")
+            } icon: {
                 FreshnessApple(freshness: .ripening, size: 44)
             }
         } description: {
@@ -83,27 +94,25 @@ struct UninstallSheet: View {
         } actions: {
             HStack {
                 Button("Im Finder zeigen") { NSWorkspace.shared.activateFileViewerSelecting(urls) }
-                Button("Festplattenvollzugriff …") {
-                    if let url = URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_AllFiles") {
-                        NSWorkspace.shared.open(url)
-                    }
-                }
+                Button("Festplattenvollzugriff …") { FullDiskAccess.openSettings() }
             }
         }
     }
 
     private var list: some View {
         List {
-            Section {
-                row(icon: AnyView(AppIconView(url: model.app.url)), title: model.app.name,
-                    detail: model.app.url.deletingLastPathComponent().path(percentEncoded: false), size: model.app.size)
-            } header: {
-                Text("App")
+            if !isReset {
+                Section {
+                    row(icon: AnyView(AppIconView(url: model.app.url)), title: model.app.name,
+                        detail: model.app.url.deletingLastPathComponent().path(percentEncoded: false), size: model.app.size)
+                } header: {
+                    Text("App")
+                }
             }
 
             Section {
                 if model.leftovers.isEmpty {
-                    Text("Keine Reste gefunden. Sauber!")
+                    Text(isReset ? "Keine Daten gefunden. Die App ist schon wie neu." : "Keine Reste gefunden. Sauber!")
                         .foregroundStyle(.secondary)
                 } else {
                     ForEach(model.leftovers) { leftover in
@@ -122,10 +131,10 @@ struct UninstallSheet: View {
                     }
                 }
             } header: {
-                Text("Reste")
+                Text(isReset ? "Daten" : "Reste")
             }
 
-            if let command = model.brewCommand {
+            if !isReset, let command = model.brewCommand {
                 Section("Homebrew") {
                     Text("Installiert per Homebrew. Damit Homebrew Bescheid weiß, kannst du stattdessen im Terminal ausführen:")
                         .foregroundStyle(.secondary)
@@ -176,6 +185,8 @@ struct UninstallSheet: View {
         .accessibilityElement(children: .combine)
     }
 
+    private var isReset: Bool { model.mode == .reset }
+
     private var footer: some View {
         HStack {
             if case .failed(let message) = model.phase {
@@ -199,7 +210,7 @@ struct UninstallSheet: View {
                     .keyboardShortcut(.cancelAction)
                 Button(role: .destructive) {
                     Task {
-                        if await model.confirm() {
+                        if await model.confirm(), !isReset {
                             withAnimation(reduceMotion ? nil : .default) { apps.didUninstall(model.app) }
                         }
                     }
@@ -207,7 +218,7 @@ struct UninstallSheet: View {
                     if model.phase == .working {
                         ProgressView().controlSize(.small)
                     } else {
-                        Text("In den Papierkorb legen")
+                        Text(isReset ? "Zurücksetzen" : "In den Papierkorb legen")
                     }
                 }
                 .keyboardShortcut(.defaultAction)

@@ -5,7 +5,21 @@ import Observation
 enum AppFilter: Hashable {
     case all
     case windfall
+    /// What removed apps left behind. Shows leftovers instead of apps.
+    case orphans
     case source(AppSource)
+}
+
+/// Uninstall removes the app and its data, reset only the data, so the app starts like new.
+enum RemovalMode: Sendable {
+    case uninstall
+    case reset
+}
+
+struct RemovalRequest: Identifiable, Equatable {
+    let app: InstalledApp
+    let mode: RemovalMode
+    var id: String { app.id + (mode == .reset ? "#reset" : "") }
 }
 
 @Observable
@@ -20,8 +34,19 @@ final class AppsViewModel {
     var sortOrder = [KeyPathComparator(\InstalledApp.sortName)]
     var selection = Set<InstalledApp.ID>()
     var showsInspector = true
-    /// The app whose uninstall sheet is open.
-    var uninstallTarget: InstalledApp?
+    /// The app whose uninstall or reset sheet is open.
+    var removalRequest: RemovalRequest?
+
+    /// Leftovers of removed apps, filled after the apps are loaded.
+    private(set) var orphanGroups: [OrphanGroup] = []
+    private(set) var isScanningOrphans = false
+    var orphanSelection = Set<OrphanGroup.ID>()
+    /// Folders that stayed after the last removal of leftovers (protected by macOS).
+    private(set) var orphansLeftBehind: [URL] = []
+
+    /// Without Full Disk Access, other apps' containers can't be checked or moved.
+    private(set) var hasFullDiskAccess = true
+    var accessHintDismissed = false
 
     var windfallDays: Int {
         didSet { defaults.set(windfallDays, forKey: Self.windfallKey) }
@@ -58,7 +83,23 @@ final class AppsViewModel {
         markRunning()
         selection = selection.filter { id in apps.contains { $0.id == id } }
         isLoading = false
-        await measureSizes()
+        refreshAccess()
+        async let sizes: Void = measureSizes()
+        async let orphans: Void = loadOrphans()
+        _ = await (sizes, orphans)
+    }
+
+    func refreshAccess() {
+        hasFullDiskAccess = repository.hasFullDiskAccess()
+    }
+
+    func loadOrphans() async {
+        guard !isScanningOrphans else { return }
+        isScanningOrphans = true
+        let installed = Set(apps.compactMap(\.bundleID))
+        orphanGroups = await repository.orphans(installed: installed)
+        orphanSelection = orphanSelection.filter { id in orphanGroups.contains { $0.id == id } }
+        isScanningOrphans = false
     }
 
     /// Running apps count as fresh, whatever Spotlight and the file dates say.
@@ -99,11 +140,14 @@ final class AppsViewModel {
         switch filter {
         case .all: apps
         case .windfall: apps.filter { freshness(of: $0) == .windfall && !$0.isProtected }
+        case .orphans: []
         case .source(let source): apps.filter { $0.source == source }
         }
     }
 
-    func count(_ filter: AppFilter) -> Int { apps(matching: filter).count }
+    func count(_ filter: AppFilter) -> Int {
+        filter == .orphans ? orphanGroups.count : apps(matching: filter).count
+    }
 
     var visibleApps: [InstalledApp] {
         let query = searchText.trimmingCharacters(in: .whitespaces)
@@ -167,15 +211,56 @@ final class AppsViewModel {
 
     func requestUninstall(_ app: InstalledApp? = nil) {
         guard let app = app ?? inspectedApp, !app.isProtected else { return }
-        uninstallTarget = app
+        removalRequest = RemovalRequest(app: app, mode: .uninstall)
+    }
+
+    func requestReset(_ app: InstalledApp? = nil) {
+        guard let app = app ?? inspectedApp, !app.isProtected else { return }
+        removalRequest = RemovalRequest(app: app, mode: .reset)
     }
 
     func didUninstall(_ app: InstalledApp) {
         apps.removeAll { $0.id == app.id }
         selection.remove(app.id)
+        // Leftovers the user unticked now belong to a removed app.
+        Task { await loadOrphans() }
     }
 
     var otherBundleIDs: Set<String> { Set(apps.compactMap(\.bundleID)) }
+
+    // MARK: Leftovers of removed apps
+
+    var visibleOrphans: [OrphanGroup] {
+        let query = searchText.trimmingCharacters(in: .whitespaces)
+        guard !query.isEmpty else { return orphanGroups }
+        return orphanGroups.filter { $0.bundleID.localizedStandardContains(query) }
+    }
+
+    var selectedOrphans: [OrphanGroup] { orphanGroups.filter { orphanSelection.contains($0.id) } }
+    var orphansTotalSize: Int64 { orphanGroups.reduce(0) { $0 + $1.size } }
+    var selectedOrphansSize: Int64 { selectedOrphans.reduce(0) { $0 + $1.size } }
+
+    func toggleOrphan(_ group: OrphanGroup) {
+        if orphanSelection.contains(group.id) { orphanSelection.remove(group.id) } else { orphanSelection.insert(group.id) }
+    }
+
+    /// Moves the chosen leftovers to the Trash. Throws only when the admin step fails or is cancelled.
+    func removeSelectedOrphans() async throws {
+        let groups = selectedOrphans
+        guard !groups.isEmpty else { return }
+        let remaining = try await repository.remove(groups.flatMap(\.leftovers))
+        orphansLeftBehind = remaining
+        let stayed = Set(remaining.map(\.plainPath))
+        orphanGroups = orphanGroups.compactMap { group in
+            guard orphanSelection.contains(group.id) else { return group }
+            var group = group
+            group.leftovers.removeAll { !stayed.contains($0.url.plainPath) }
+            return group.leftovers.isEmpty ? nil : group
+        }
+        orphanSelection = []
+    }
+
+    func dismissLeftBehind() { orphansLeftBehind = [] }
 }
 
 extension InstalledApp {

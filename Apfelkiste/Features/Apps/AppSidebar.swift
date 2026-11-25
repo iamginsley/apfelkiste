@@ -11,6 +11,8 @@ struct AppSidebar: View {
                 row(.all, "Alle Apps")
                 row(.windfall, Freshness.windfall.title)
                     .help("Apps, die du seit \(model.windfallDays) Tagen nicht benutzt hast")
+                row(.orphans, String(localized: "Reste"))
+                    .help("Was gelöschte Apps zurückgelassen haben")
             }
             Section("Herkunft") {
                 ForEach([AppSource.appStore, .homebrew, .direct, .apple], id: \.self) { source in

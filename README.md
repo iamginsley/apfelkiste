@@ -20,6 +20,13 @@ last used it. Uninstall an app together with everything it leaves behind in `~/L
   containers, logs, saved state, web data, launch agents) and moves the app and the selected leftovers to
   the Trash. Nothing is deleted permanently. Running apps are asked to quit first. App Store apps owned by
   root trigger Finder's admin prompt.
+- **Reste (leftovers of removed apps):** a sidebar section that lists what apps left behind after they were
+  dragged to the Trash, grouped by bundle ID, with size. See "How orphaned leftovers are found" below.
+- **Reset:** keeps the app and moves only its data (preferences, caches, containers, saved state) to the Trash,
+  so it starts like freshly installed. Services, helpers and installer files stay. Context menu, inspector
+  or ⌥⌘⌫.
+- **Full Disk Access:** without it macOS hides other apps' containers. A hint above the list explains it and
+  opens the right page in System Settings; Apfelkiste notices when it is turned on and looks again.
 - Homebrew casks are recognized; the uninstall sheet offers `brew uninstall --cask --zap` to copy.
 - No backend, no account, no network. Nothing leaves the Mac.
 
@@ -39,6 +46,21 @@ last used it. Uninstall an app together with everything it leaves behind in `~/L
 - **Likely matches** (offered, not preselected): group containers with the app's team ID prefix (shared by all
   apps of that vendor), and folders named after the app in Application Support, Caches and Logs.
 - Apps protected by SIP (Safari, apps that resolve into `/System`) are listed but can't be uninstalled.
+
+## How orphaned leftovers are found
+
+`OrphanFinder` lists entries in `~/Library` (Application Support, Caches, Containers, Preferences, Saved
+Application State, HTTPStorages, WebKit, Logs) that are named after a bundle ID with at least three parts, plus
+launch agents and daemons whose program no longer exists. An ID counts as orphaned when no installed app is that
+ID, a prefix of it or an extension of it, and LaunchServices knows no app with it outside the Trash.
+
+- `com.apple.` entries are only offered for Apple apps from the App Store (GarageBand, iMovie, iWork, Xcode …);
+  everything else of Apple's belongs to macOS.
+- Data shared by SDKs (Firebase, Crashlytics, Amplitude …), app groups and command line tools (SwiftPM,
+  Python, Docker …) is never offered.
+- When another app of the same vendor is still installed, the group is marked "bitte prüfen" and left out of
+  "Alle auswählen".
+- Nothing is preselected; removal goes to the Trash like an uninstall.
 
 ## How removal works
 
