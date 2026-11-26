@@ -257,12 +257,15 @@ struct AccessHint: View {
             VStack(alignment: .leading, spacing: 2) {
                 Text("Festplattenvollzugriff fehlt")
                     .font(.headline)
+                // A line limit, not fixedSize: when SwiftUI asks for the window's minimum size it proposes a tiny
+                // width, and a text free to grow vertically then claimed thousands of points and pushed the
+                // whole window content (sidebar and hero) out of view.
                 Text("Ohne ihn sieht Apfelkiste nicht alle Reste und kann die Container anderer Apps nicht entfernen. Schalte Apfelkiste in den Systemeinstellungen ein, dann geht es hier von selbst weiter.")
                     .font(.callout)
                     .foregroundStyle(.white.opacity(0.8))
-                    .fixedSize(horizontal: false, vertical: true)
+                    .lineLimit(3)
             }
-            Spacer(minLength: 8)
+            .frame(minWidth: 280, maxWidth: .infinity, alignment: .leading)
             Button("Einschalten …") { FullDiskAccess.openSettings() }
                 .buttonStyle(PillButtonStyle(text: model.filter.scene.top))
             Button {
