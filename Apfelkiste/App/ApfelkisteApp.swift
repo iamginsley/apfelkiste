@@ -21,6 +21,9 @@ struct ApfelkisteApp: App {
                 .keyboardShortcut("i", modifiers: [.command, .option])
             }
             CommandGroup(after: .pasteboard) {
+                Button("Zurücksetzen …") { model.requestReset() }
+                    .keyboardShortcut(.delete, modifiers: [.command, .option])
+                    .disabled(model.inspectedApp.map { $0.isProtected } ?? true)
                 Button("Deinstallieren …") { model.requestUninstall() }
                     .keyboardShortcut(.delete, modifiers: .command)
                     .disabled(model.inspectedApp.map { $0.isProtected } ?? true)
@@ -45,10 +48,11 @@ struct ApfelkisteApp: App {
 enum LaunchFlags {
     #if DEBUG
     static let demo = ProcessInfo.processInfo.arguments.contains("-ApfelkisteDemo")
-    /// `-ApfelkisteFilter windfall|appStore|homebrew|direct|apple` opens that sidebar entry.
+    /// `-ApfelkisteFilter windfall|orphans|appStore|homebrew|direct|apple` opens that sidebar entry.
     static let filter: AppFilter? = {
         guard let raw = UserDefaults.standard.string(forKey: "ApfelkisteFilter") else { return nil }
         if raw == "windfall" { return .windfall }
+        if raw == "orphans" { return .orphans }
         return AppSource(rawValue: raw).map(AppFilter.source)
     }()
     /// `-ApfelkisteSelect <name>` selects that app (and opens its inspector).

@@ -24,7 +24,7 @@ struct CrateScene: Equatable {
 
 extension AppFilter {
     // White on the lighter (bottom) color of each gradient: green 8.2:1, amber 9.6:1, blue 10.3:1,
-    // orange 8.6:1, teal 8.4:1, graphite 12.7:1. Secondary text is white at 80 %, at least 4.5:1 on all.
+    // orange 8.6:1, teal 8.4:1, graphite 12.7:1, berry 12.2:1. Secondary text is white at 80 %, at least 4.5:1 on all.
     var scene: CrateScene {
         switch self {
         case .all:
@@ -33,6 +33,9 @@ extension AppFilter {
         case .windfall:
             CrateScene(top: 0x2E1606, bottom: 0x6A3810, glow: 0xF0A040, symbol: "leaf.fill",
                        title: "Fallobst", tagline: "Apps, die schon lange keiner mehr angefasst hat.")
+        case .orphans:
+            CrateScene(top: 0x2A0F1C, bottom: 0x5E1E3A, glow: 0xF06A9A, symbol: "sparkles",
+                       title: "Reste", tagline: "Was gelöschte Apps zurückgelassen haben.")
         case .source(.appStore):
             CrateScene(top: 0x0A1838, bottom: 0x1A3C88, glow: 0x5AA0FF, symbol: "bag.fill",
                        title: "App Store", tagline: "Gekauft und geladen im Mac App Store.")

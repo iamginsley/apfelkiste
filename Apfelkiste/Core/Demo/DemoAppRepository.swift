@@ -73,6 +73,43 @@ struct DemoAppRepository: AppRepository {
         try await Task.sleep(for: .milliseconds(700))
         return []
     }
+
+    @MainActor
+    func reset(_ app: InstalledApp, leftovers: [Leftover]) async throws -> [URL] {
+        try await Task.sleep(for: .milliseconds(500))
+        return []
+    }
+
+    func orphans(installed: Set<String>) async -> [OrphanGroup] {
+        let library = URL(filePath: "/Users/demo/Library")
+        func group(_ id: String, _ items: [(String, Leftover.Kind, Int64)]) -> OrphanGroup {
+            OrphanGroup(bundleID: id, leftovers: items.map { path, kind, size in
+                Leftover(url: library.appending(path: path), kind: kind, match: .bundleID, size: size)
+            })
+        }
+        return [
+            group("de.beispiel.schachbrett", [
+                ("Containers/de.beispiel.schachbrett", .containers, 640_000_000),
+                ("Preferences/de.beispiel.schachbrett.plist", .preferences, 8_192),
+            ]),
+            group("de.beispiel.radlkarte", [
+                ("Application Support/de.beispiel.radlkarte", .applicationSupport, 1_240_000_000),
+                ("Caches/de.beispiel.radlkarte", .caches, 310_000_000),
+                ("Saved Application State/de.beispiel.radlkarte.savedState", .savedState, 24_000),
+            ]),
+            group("de.beispiel.wurstsemmel", [
+                ("Caches/de.beispiel.wurstsemmel", .caches, 72_000_000),
+            ]),
+        ]
+    }
+
+    @MainActor
+    func remove(_ leftovers: [Leftover]) async throws -> [URL] {
+        try await Task.sleep(for: .milliseconds(600))
+        return []
+    }
+
+    func hasFullDiskAccess() -> Bool { true }
 }
 
 /// Colorful placeholder icons for the demo apps.

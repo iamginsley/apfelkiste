@@ -87,8 +87,14 @@ struct AppInspector: View {
                     .font(.callout)
                     .foregroundStyle(.secondary)
             } else {
-                Button("Im Finder zeigen", systemImage: "folder") {
-                    NSWorkspace.shared.activateFileViewerSelecting([app.url])
+                HStack {
+                    Button("Im Finder zeigen", systemImage: "folder") {
+                        NSWorkspace.shared.activateFileViewerSelecting([app.url])
+                    }
+                    Button("Zurücksetzen", systemImage: "arrow.counterclockwise") {
+                        model.requestReset(app)
+                    }
+                    .help("Einstellungen und Daten in den Papierkorb legen, die App behalten")
                 }
                 .controlSize(.large)
                 .buttonStyle(.bordered)

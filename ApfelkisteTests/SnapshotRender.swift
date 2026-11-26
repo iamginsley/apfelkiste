@@ -14,6 +14,7 @@ struct SnapshotRender {
             ("alle-hell", .all, "Tonstudio", .aqua),
             ("alle-dunkel", .all, "Tonstudio", .darkAqua),
             ("fallobst", .windfall, "Vokabeltrainer", .aqua),
+            ("reste", .orphans, nil, .aqua),
         ]
         for (name, filter, selected, appearance) in cases {
             let defaults = UserDefaults(suiteName: "apfelkiste-snapshot-\(UUID().uuidString)")!
@@ -22,6 +23,7 @@ struct SnapshotRender {
             model.filter = filter
             model.sortOrder = [KeyPathComparator(\InstalledApp.sortSize, order: .reverse)]
             if let selected, let app = model.apps.first(where: { $0.name == selected }) { model.selection = [app.id] }
+            if filter == .orphans { model.orphanSelection = [model.orphanGroups[1].id] }
             try await snapshot(AppsView().environment(model), size: CGSize(width: 1240, height: 780),
                                appearance: appearance, to: dir.appending(path: "\(name).png"))
         }
@@ -31,6 +33,11 @@ struct SnapshotRender {
         await sheet.search()
         try await snapshot(UninstallSheet(model: sheet).environment(AppsViewModel(repository: DemoAppRepository())),
                            size: CGSize(width: 580, height: 620), appearance: .aqua, to: dir.appending(path: "deinstallieren.png"))
+
+        let reset = UninstallViewModel(app: app, mode: .reset, repository: DemoAppRepository(), otherBundleIDs: [])
+        await reset.search()
+        try await snapshot(UninstallSheet(model: reset).environment(AppsViewModel(repository: DemoAppRepository())),
+                           size: CGSize(width: 580, height: 560), appearance: .aqua, to: dir.appending(path: "zuruecksetzen.png"))
     }
 
     private func snapshot(_ view: some View, size: CGSize, appearance: NSAppearance.Name, to url: URL) async throws {
